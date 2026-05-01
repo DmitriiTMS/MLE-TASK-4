@@ -1,10 +1,13 @@
-import { ConfigService } from "@nestjs/config";
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { PostgresConnectionCredentialsOptions } from "typeorm/driver/postgres/PostgresConnectionCredentialsOptions.js";
-import migrations from "./migrations";
+import { ConfigService } from '@nestjs/config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { PostgresConnectionCredentialsOptions } from 'typeorm/driver/postgres/PostgresConnectionCredentialsOptions.js';
 
-export const databaseOptions = (config: ConfigService): TypeOrmModuleOptions & PostgresConnectionCredentialsOptions => ({
-    type: <any>config.getOrThrow('DB_TYPE'),
+import migrations from './migrations';
+
+export const databaseOptions = (
+    config: ConfigService,
+): TypeOrmModuleOptions & PostgresConnectionCredentialsOptions => ({
+    type: config.getOrThrow('DB_TYPE') as 'postgres',
     host: config.getOrThrow('DB_HOST'),
     port: Number(config.getOrThrow('DB_PORT')),
     username: config.getOrThrow('DB_USERNAME'),
@@ -14,5 +17,5 @@ export const databaseOptions = (config: ConfigService): TypeOrmModuleOptions & P
     synchronize: false,
     migrationsTableName: config.getOrThrow('DB_MIGRATIONS_TABLE_NAME'),
     migrations,
-    autoLoadEntities: true
-})
+    autoLoadEntities: true,
+});

@@ -1,22 +1,26 @@
+import { Logger } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validateSync, ValidationError } from 'class-validator';
+
 import { ApplicationConfig } from './app.config';
-import { Logger } from '@nestjs/common';
 
 function formatErrors(errors: ValidationError[]): string {
-    return errors.map(error => {
-        if (error.constraints) {
-            return `${error.property}: ${Object.values(error.constraints).join(', ')}`;
-        }
-        if (error.children && error.children.length) {
-            return formatErrors(error.children);
-        }
-        return '';
-    }).filter(Boolean).join('\n');
+    return errors
+        .map((error) => {
+            if (error.constraints) {
+                return `${error.property}: ${Object.values(error.constraints).join(', ')}`;
+            }
+            if (error.children && error.children.length) {
+                return formatErrors(error.children);
+            }
+            return '';
+        })
+        .filter(Boolean)
+        .join('\n');
 }
 
 export function validateConfig(config: Record<string, unknown>) {
-    Logger.log('🔍 Валидация конфигурации...')
+    Logger.log('🔍 Валидация конфигурации...');
 
     const validatedConfig = plainToInstance(ApplicationConfig, config, {
         enableImplicitConversion: true,
@@ -34,6 +38,6 @@ export function validateConfig(config: Record<string, unknown>) {
         throw new Error(`Config validation error:\n${errorMessage}`);
     }
 
-    Logger.log('✅ Конфигурация валидна')
+    Logger.log('✅ Конфигурация валидна');
     return validatedConfig;
 }
