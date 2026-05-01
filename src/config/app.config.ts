@@ -8,7 +8,6 @@ export class ApplicationConfig {
     @IsNotEmpty({ always: true, message: 'NODE_ENV обязательно к заполнению' })
     NODE_ENV: Environment;
 
-
     @Min(1, { message: 'HTTP_PORT должен быть больше 0' })
     @Max(65535, { message: 'HTTP_PORT должен быть меньше 65536' })
     @IsNotEmpty({ always: true, message: 'HTTP_PORT обязательно к заполнению' })

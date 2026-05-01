@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync, ValidationError } from 'class-validator';
 import { ApplicationConfig } from './app.config';
+import { Logger } from '@nestjs/common';
 
 function formatErrors(errors: ValidationError[]): string {
     return errors.map(error => {
@@ -15,7 +16,7 @@ function formatErrors(errors: ValidationError[]): string {
 }
 
 export function validateConfig(config: Record<string, unknown>) {
-    console.log('🔍 Валидация конфигурации...');
+    Logger.log('🔍 Валидация конфигурации...')
 
     const validatedConfig = plainToInstance(ApplicationConfig, config, {
         enableImplicitConversion: true,
@@ -23,7 +24,7 @@ export function validateConfig(config: Record<string, unknown>) {
 
     const errors = validateSync(validatedConfig, {
         skipMissingProperties: false,
-        validationError: { target: false, value: true }, 
+        validationError: { target: false, value: true },
         forbidUnknownValues: true,
     });
 
@@ -33,6 +34,6 @@ export function validateConfig(config: Record<string, unknown>) {
         throw new Error(`Config validation error:\n${errorMessage}`);
     }
 
-    console.log('✅ Конфигурация валидна');
+    Logger.log('✅ Конфигурация валидна')
     return validatedConfig;
 }
