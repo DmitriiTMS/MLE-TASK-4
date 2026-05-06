@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
-export class CreateUserDto {
+export class RegisterDto {
     @MaxLength(255, { message: "Максимальная длина поля 'name' не может быть больше 255 символов" })
     @IsString({ message: "Поле 'name' должно быть строкой" })
     @IsNotEmpty({ message: "Поле 'name' не может быть пустым" })
@@ -17,5 +17,5 @@ export class CreateUserDto {
     @MinLength(4, { message: "Минимальная длина поля 'password' должна быть 4 символов" })
     @IsString({ message: "Поле 'password' должно быть строкой" })
     @IsNotEmpty({ message: "Поле 'password' не может быть пустым" })
-    hashPassword: string;
+    password: string;
 }
