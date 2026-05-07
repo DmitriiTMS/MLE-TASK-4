@@ -17,7 +17,7 @@ export class UserEntity {
     @Column({ unique: true, length: 255, nullable: false })
     email: string;
 
-    @Column({ type: 'varchar', name: 'password_hash', nullable: false, select: false })
+    @Column({ type: 'varchar', name: 'password_hash', nullable: false })
     passwordHash: string;
 
     @CreateDateColumn({ type: 'timestamptz', name: 'created_at', nullable: false })

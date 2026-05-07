@@ -17,7 +17,7 @@ export class JwtTokenService {
     constructor(
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
-    ) { }
+    ) {}
 
     async generateTokens(payload: JwtPayload): Promise<Tokens> {
         const [accessToken, refreshToken] = await Promise.all([
@@ -35,8 +35,8 @@ export class JwtTokenService {
                 email: payload.email,
             },
             {
-                expiresIn: this.configService.get('JWT_ACCESS_EXPIRES_IN') || '15m',
-                secret: this.configService.get('JWT_ACCESS_SECRET'),
+                expiresIn: this.configService.getOrThrow('JWT_ACCESS_EXPIRES_IN'),
+                secret: this.configService.getOrThrow('JWT_ACCESS_SECRET'),
             },
         );
     }
@@ -45,8 +45,8 @@ export class JwtTokenService {
         return this.jwtService.signAsync(
             { sub: payload.sub, email: payload.email },
             {
-                expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d',
-                secret: this.configService.get('JWT_REFRESH_SECRET'),
+                expiresIn: this.configService.getOrThrow('JWT_REFRESH_EXPIRES_IN'),
+                secret: this.configService.getOrThrow('JWT_REFRESH_SECRET'),
             },
         );
     }
@@ -54,7 +54,7 @@ export class JwtTokenService {
     async verifyAccessToken(token: string): Promise<JwtPayload> {
         try {
             const payload = await this.jwtService.verifyAsync(token, {
-                secret: this.configService.get('JWT_ACCESS_SECRET'),
+                secret: this.configService.getOrThrow('JWT_ACCESS_SECRET'),
             });
             return payload;
         } catch (error) {
@@ -65,7 +65,7 @@ export class JwtTokenService {
     async verifyRefreshToken(token: string): Promise<JwtPayload> {
         try {
             const payload = await this.jwtService.verifyAsync(token, {
-                secret: this.configService.get('JWT_REFRESH_SECRET'),
+                secret: this.configService.getOrThrow('JWT_REFRESH_SECRET'),
             });
             return payload;
         } catch (error) {

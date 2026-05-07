@@ -1,5 +1,6 @@
 import { Injectable, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -8,9 +9,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     canActivate(context: ExecutionContext) {
-        const request = context.switchToHttp().getRequest();
+        const request = context.switchToHttp().getRequest<Request>();
         this.logger.log(`[JwtAuthGuard] - Request to: ${request.method} ${request.url}`);
-        
+
         return super.canActivate(context);
     }
 
@@ -30,7 +31,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             this.logger.warn(`[JwtAuthGuard] - Unauthorized access attempt`);
             throw err || new UnauthorizedException('Unauthorized');
         }
-        
+
         this.logger.log(`[JwtAuthGuard] - User ${user.id} authenticated successfully`);
         return user;
     }

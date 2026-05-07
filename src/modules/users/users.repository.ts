@@ -18,4 +18,8 @@ export class UsersRepository implements IUsersRepository {
     async findByEmail(email: string): Promise<UserEntity | null> {
         return await this.userRepository.findOneBy({ email });
     }
+
+    async findById(id: number): Promise<UserEntity | null> {
+        return await this.userRepository.findOneBy({ id });
+    }
 }

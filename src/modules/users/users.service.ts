@@ -6,14 +6,13 @@ import type { IUsersRepository } from './users.repository.interface';
 
 @Injectable()
 export class UsersService implements IUsersService {
-
     private readonly context = UsersService.name;
     private readonly operationCreate = 'create';
 
     constructor(
         private readonly logger: Logger,
         @Inject('IUsersRepository') private readonly userRepository: IUsersRepository,
-    ) { }
+    ) {}
 
     async create(createUserDto: CreateUserDto): Promise<UserEntity> {
         const user = UserEntity.createInstance(
@@ -22,7 +21,9 @@ export class UsersService implements IUsersService {
             createUserDto.hashPassword,
         );
         try {
-            this.logger.log(`[${this.context}] - [${this.operationCreate}] - ${createUserDto.name} - ${createUserDto.email}`);
+            this.logger.log(
+                `[${this.context}] - [${this.operationCreate}] - ${createUserDto.name} - ${createUserDto.email}`,
+            );
             return await this.userRepository.createUser(user);
         } catch (error: any) {
             this.logger.log(`[${this.context}] - [${this.operationCreate}] - ${error.message}`);

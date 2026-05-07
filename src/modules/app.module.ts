@@ -6,7 +6,6 @@ import { validateConfig } from '../config/validation.config';
 import { AuthModule } from './auth/auth.module';
 import { DataBaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
-import { JwtTokenModule } from './auth/utils/jwt/jwt.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
