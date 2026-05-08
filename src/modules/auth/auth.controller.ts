@@ -12,8 +12,14 @@ import {
     UseGuards,
     UnauthorizedException,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { ApiGetMeDocumentation } from './decorators/swagger-get-me.decorator';
+import { ApiLoginDocumentation } from './decorators/swagger-login.decorator';
+import { ApiLogoutDocumentation } from './decorators/swagger-logout.decorator';
+import { ApiRefreshTokenDocumentation } from './decorators/swagger-refresh-token.decorator';
+import { ApiRegisterDocumentation } from './decorators/swagger-register.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { LogMessages } from './types/constants/log-messages.constants';
@@ -21,6 +27,7 @@ import { JwtAuthGuard } from './utils/jwt/jwt-auth.guard';
 import type { IAuthService } from './auth.service.interface';
 import type { Response, Request } from 'express';
 
+@ApiTags('Авторизация')
 @Controller('auth')
 export class AuthController {
     private readonly context = AuthController.name;
@@ -39,6 +46,7 @@ export class AuthController {
     @Post('register')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.CREATED)
+    @ApiRegisterDocumentation()
     async register(
         @Body() registerDto: RegisterDto,
         @Res({ passthrough: true }) res: Response,
@@ -58,7 +66,7 @@ export class AuthController {
             res.cookie('refreshToken', tokens.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
 
@@ -88,6 +96,7 @@ export class AuthController {
     @Post('login')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.OK)
+    @ApiLoginDocumentation()
     async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
         const { email } = loginDto;
         try {
@@ -105,7 +114,7 @@ export class AuthController {
             res.cookie('refreshToken', tokens.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
 
@@ -135,26 +144,27 @@ export class AuthController {
     @Get('get-me')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
+    @ApiGetMeDocumentation()
     async getProfile(@CurrentUser() user: { id: number; email: string }) {
         try {
-            const userRes = await this.authService.getMe(user.id);
             this.logger.log(
                 LogMessages.auth.me.requestSuccess(
                     this.context,
                     this.methodGet,
                     this.routeMe,
-                    JSON.stringify(userRes),
+                    JSON.stringify(user),
                 ),
             );
-            return userRes;
+            return user;
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             throw errorMessage;
         }
     }
 
-    @Post('refresh')
+    @Post('refresh-token')
     @HttpCode(HttpStatus.OK)
+    @ApiRefreshTokenDocumentation()
     async refresh(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
@@ -214,6 +224,7 @@ export class AuthController {
     @Post('logout')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
+    @ApiLogoutDocumentation()
     async logout(
         @Res({ passthrough: true }) res: Response,
         @CurrentUser() user: { id: number; email: string },
@@ -223,7 +234,7 @@ export class AuthController {
         res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
         });
 
         return { message: 'Logged out successfully' };

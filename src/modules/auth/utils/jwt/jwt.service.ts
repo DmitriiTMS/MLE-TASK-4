@@ -51,17 +51,6 @@ export class JwtTokenService {
         );
     }
 
-    async verifyAccessToken(token: string): Promise<JwtPayload> {
-        try {
-            const payload = await this.jwtService.verifyAsync(token, {
-                secret: this.configService.getOrThrow('JWT_ACCESS_SECRET'),
-            });
-            return payload;
-        } catch (error) {
-            throw new UnauthorizedException('Invalid or expired access token');
-        }
-    }
-
     async verifyRefreshToken(token: string): Promise<JwtPayload> {
         try {
             const payload = await this.jwtService.verifyAsync(token, {
@@ -71,17 +60,5 @@ export class JwtTokenService {
         } catch (error) {
             throw new UnauthorizedException('Invalid or expired refresh token');
         }
-    }
-
-    decodeToken(token: string): JwtPayload | null {
-        return this.jwtService.decode(token);
-    }
-
-    async refreshTokens(refreshToken: string): Promise<Tokens> {
-        const payload = await this.verifyRefreshToken(refreshToken);
-        return this.generateTokens({
-            sub: payload.sub,
-            email: payload.email,
-        });
     }
 }

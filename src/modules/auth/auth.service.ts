@@ -82,14 +82,13 @@ export class AuthService implements IAuthService {
         return tokens;
     }
 
-    async getMe(userId: number): Promise<IGetMe> {
+    async validate(userId: number): Promise<IGetMe> {
         const user = await this.userRepository.findById(userId);
         if (!user) {
             this.logger.warn(`[${AuthService.name}] - [${AUTH_MESSAGE.USER_NOT_FOUND}]`);
             throw new NotFoundException(AUTH_MESSAGE.USER_NOT_FOUND);
         }
-        const { id, name, email } = user;
-        return { id, name, email };
+        return user;
     }
 
     async refreshTokens(refreshToken: string): Promise<Tokens> {
