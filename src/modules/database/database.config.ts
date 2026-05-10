@@ -13,7 +13,7 @@ export const databaseOptions = (
     username: config.getOrThrow('DB_USERNAME'),
     password: config.getOrThrow('DB_PASSWORD'),
     database: config.getOrThrow('DB_DATABASE'),
-    logging: config.getOrThrow('DB_LOGGING') == true,
+    logging: config.getOrThrow('DB_LOGGING') === 'true',
     synchronize: false,
     migrationsTableName: config.getOrThrow('DB_MIGRATIONS_TABLE_NAME'),
     migrations,

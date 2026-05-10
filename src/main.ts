@@ -21,7 +21,7 @@ async function bootstrap() {
     app.enableCors(createCorsConfig(config));
 
     const enableSwagger = config.getOrThrow('ENABLE_SWAGGER') === 'true';
- 
+
     if (enableSwagger) {
         const document = SwaggerModule.createDocument(app, swaggerConfig);
         SwaggerModule.setup('/api-voting-system', app, document);
