@@ -3,14 +3,35 @@ services:
     image: postgres:17
     container_name: db-postgres
     ports:
-      - "5433:5432"
+      - 5433:5432
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
     restart: unless-stopped
 
 volumes:
   postgres_data:
+    name: postgres_data
+  redis_data:
+    name: redis_data
+    
+networks:
+  backend:
+    driver: bridge
