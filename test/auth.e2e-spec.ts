@@ -1,4 +1,4 @@
-// yarn test:e2e -- test/app.e2e-spec.ts
+// yarn test:e2e -- test/auth.e2e-spec.ts
 import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThrottlerGuard } from '@nestjs/throttler';
