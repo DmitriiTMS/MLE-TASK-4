@@ -10,10 +10,10 @@ export class PollEntity {
     title: string;
 
     @Column({ type: 'varchar', length: 3000, nullable: true })
-    description: string;
+    description?: string;
 
     @Column({ type: 'boolean', name: 'is_active', default: true })
-    isActive: boolean;
+    isActive?: boolean;
 
     @CreateDateColumn({ type: 'timestamptz', name: 'created_at', nullable: false })
     createdAt: Date;
@@ -25,4 +25,17 @@ export class PollEntity {
     @JoinColumn({ name: 'create_user_id' })
     createUser: UserEntity;
 
+    static createInstance(
+        title: string,
+        description: string | undefined,
+        isActive: boolean | undefined,
+        createUser: UserEntity
+    ): PollEntity {
+        const poll = new PollEntity();
+        poll.title = title;
+        poll.description = description;
+        poll.isActive = isActive;
+        poll.createUser = createUser
+        return poll;
+    }
 }
