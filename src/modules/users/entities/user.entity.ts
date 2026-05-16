@@ -2,9 +2,11 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { PollEntity } from '../../polls/entities/polls.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -25,6 +27,9 @@ export class UserEntity {
 
     @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at', nullable: false })
     updatedAt: Date;
+
+    @OneToMany(() => PollEntity, (poll) => poll.createUserId)
+    polls: PollEntity[];
 
     static createInstance(name: string, email: string, passwordHash: string): UserEntity {
         const user = new UserEntity();

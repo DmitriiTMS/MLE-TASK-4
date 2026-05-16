@@ -6,6 +6,7 @@ import { validateConfig } from '../config/validation.config';
 import { AuthModule } from './auth/auth.module';
 import { DataBaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
+import { PollsModule } from './polls/polls.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -19,6 +20,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         DataBaseModule,
         UsersModule,
         AuthModule,
+        PollsModule,
     ],
 })
 export class AppModule {}
