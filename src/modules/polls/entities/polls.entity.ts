@@ -6,9 +6,6 @@ export class PollEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'int', name: 'create_user_id', nullable: false })
-    createUserId: number;
-
     @Column({ type: 'varchar', length: 255, nullable: false })
     title: string;
 
@@ -24,9 +21,8 @@ export class PollEntity {
     @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at', nullable: false })
     updatedAt: Date;
 
-
     @ManyToOne(() => UserEntity, (user) => user.polls, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'create_user_id' })
-    user: UserEntity;
+    createUser: UserEntity;
 
 }

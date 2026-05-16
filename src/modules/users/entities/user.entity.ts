@@ -28,7 +28,7 @@ export class UserEntity {
     @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at', nullable: false })
     updatedAt: Date;
 
-    @OneToMany(() => PollEntity, (poll) => poll.createUserId)
+    @OneToMany(() => PollEntity, (poll) => poll.createUser)
     polls: PollEntity[];
 
     static createInstance(name: string, email: string, passwordHash: string): UserEntity {
