@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
     Column,
     CreateDateColumn,
@@ -19,6 +20,7 @@ export class UserEntity {
     @Column({ unique: true, length: 255, nullable: false })
     email: string;
 
+    @Exclude()
     @Column({ type: 'varchar', name: 'password_hash', nullable: false })
     passwordHash: string;
 
@@ -28,6 +30,7 @@ export class UserEntity {
     @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at', nullable: false })
     updatedAt: Date;
 
+    @Exclude()
     @OneToMany(() => PollEntity, (poll) => poll.createUser)
     polls: PollEntity[];
 

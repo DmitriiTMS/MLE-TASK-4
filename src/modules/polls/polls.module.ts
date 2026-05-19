@@ -1,17 +1,14 @@
 import { Logger, Module } from '@nestjs/common';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PollEntity } from './entities/polls.entity';
-import { PollsService } from './polls.service';
-import { PollsController } from './polls.controller';
 import { UsersModule } from '../users/users.module';
+import { PollEntity } from './entities/polls.entity';
+import { PollsController } from './polls.controller';
 import { PollsRepository } from './polls.repository';
+import { PollsService } from './polls.service';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([PollEntity]),
-        UsersModule
-    ],
+    imports: [TypeOrmModule.forFeature([PollEntity]), UsersModule],
     controllers: [PollsController],
     providers: [
         Logger,
@@ -24,6 +21,5 @@ import { PollsRepository } from './polls.repository';
             useClass: PollsRepository,
         },
     ],
-
 })
-export class PollsModule { }
+export class PollsModule {}

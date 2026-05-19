@@ -1,5 +1,13 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UserEntity } from "../../users/entities/user.entity";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity('polls')
 export class PollEntity {
@@ -13,7 +21,7 @@ export class PollEntity {
     description?: string;
 
     @Column({ type: 'boolean', name: 'is_active', default: true })
-    isActive?: boolean;
+    isActive: boolean;
 
     @CreateDateColumn({ type: 'timestamptz', name: 'created_at', nullable: false })
     createdAt: Date;
@@ -25,17 +33,53 @@ export class PollEntity {
     @JoinColumn({ name: 'create_user_id' })
     createUser: UserEntity;
 
+    belongsToUser(userId: number): boolean {
+        return this.createUser?.id === userId;
+    }
+
+    isActiveStatus(): boolean {
+        return this.isActive === true;
+    }
+
     static createInstance(
         title: string,
         description: string | undefined,
-        isActive: boolean | undefined,
-        createUser: UserEntity
+        createUser: UserEntity,
     ): PollEntity {
         const poll = new PollEntity();
         poll.title = title;
         poll.description = description;
-        poll.isActive = isActive;
-        poll.createUser = createUser
+        poll.isActive = true;
+        poll.createUser = createUser;
         return poll;
+    }
+
+    update(data: Partial<Pick<PollEntity, 'title' | 'description' | 'isActive'>>): void {
+        if (data.title !== undefined) {
+            this.title = data.title;
+        }
+        if (data.description !== undefined) {
+            this.description = data.description;
+        }
+        if (data.isActive !== undefined) {
+            this.isActive = data.isActive;
+        }
+    }
+
+    toResponse() {
+        return {
+            id: this.id,
+            title: this.title,
+            description: this.description,
+            isActive: this.isActive,
+            createUser: {
+                id: this.createUser.id,
+                name: this.createUser.name,
+            },
+        };
+    }
+
+    static toResponseList(polls: PollEntity[]) {
+        return polls.map((poll) => poll.toResponse());
     }
 }
