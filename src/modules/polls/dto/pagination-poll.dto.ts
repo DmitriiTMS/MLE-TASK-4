@@ -1,17 +1,33 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+import { IsInt, IsOptional, Min, Max } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PaginationDto {
-    @IsOptional()
+    @ApiPropertyOptional({
+        description: 'Номер страницы',
+        example: 1,
+        minimum: 1,
+        default: 1,
+        type: Number,
+    })
     @Type(() => Number)
-    @IsInt()
-    @Min(1)
+    @IsInt({ message: 'Поле page должно быть целым числом' })
+    @Min(1, { message: 'page должен быть больше или равен 1' })
+    @IsOptional()
     page: number = 1;
 
-    @IsOptional()
+    @ApiPropertyOptional({
+        description: 'Количество элементов на странице',
+        example: 10,
+        minimum: 1,
+        maximum: 100,
+        default: 10,
+        type: Number,
+    })
     @Type(() => Number)
-    @IsInt()
-    @Min(1)
-    @Max(100)
+    @IsInt({ message: 'Поле limit должно быть целым числом' })
+    @Min(1, { message: 'limit должен быть больше или равен 1' })
+    @Max(100, { message: 'limit не может быть больше 100' })
+    @IsOptional()
     limit: number = 10;
 }

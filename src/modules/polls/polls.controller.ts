@@ -24,6 +24,11 @@ import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { PollEntity } from './entities/polls.entity';
 import type { IPollsService } from './polls.service.interface';
+import { ApiCreatePollDocumentation } from './decorators/swagger/swagger-create-poll.decorator';
+import { ApiFindAllPollsDocumentation } from './decorators/swagger/swagger-findAll-poll.decorator';
+import { ApiFindOnePollDocumentation } from './decorators/swagger/swagger-findOne-poll.decorator';
+import { ApiUpdatePollDocumentation } from './decorators/swagger/swagger-update-poll.decorator';
+import { ApiRemovePollDocumentation } from './decorators/swagger/swagger-remove-poll.decorator';
 
 @ApiTags('Опросы')
 @Controller('polls')
@@ -39,6 +44,7 @@ export class PollsController {
     @Post()
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.CREATED)
+    @ApiCreatePollDocumentation()
     async create(
         @CurrentUser() user: { id: number },
         @Body() createDto: CreatePollDto,
@@ -67,6 +73,7 @@ export class PollsController {
 
     @Get()
     @HttpCode(HttpStatus.OK)
+    @ApiFindAllPollsDocumentation()
     async findAll(
         @CurrentUser() user: { id: number },
         @Query() paginationDto: PaginationDto,
@@ -97,6 +104,7 @@ export class PollsController {
 
     @Get(':id')
     @HttpCode(HttpStatus.OK)
+    @ApiFindOnePollDocumentation()
     async findOne(
         @CurrentUser() user: { id: number },
         @Param('id', ParseIntPipe) id: number,
@@ -125,6 +133,7 @@ export class PollsController {
     @Put(':id')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.OK)
+    @ApiUpdatePollDocumentation()
     async update(
         @CurrentUser() user: { id: number },
         @Param('id', ParseIntPipe) id: number,
@@ -157,6 +166,7 @@ export class PollsController {
     @Delete(':id')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiRemovePollDocumentation()
     async remove(@CurrentUser() user: { id: number }, @Param('id', ParseIntPipe) id: number) {
         const startTime = Date.now();
         const method = 'DELETE';
