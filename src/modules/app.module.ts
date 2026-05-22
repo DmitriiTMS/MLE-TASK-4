@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { DataBaseModule } from './database/database.module';
 import { PollsModule } from './polls/polls.module';
 import { UsersModule } from './users/users.module';
+import { RedisModule } from './redis/redis.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -27,6 +28,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
             ],
         }),
         DataBaseModule,
+        RedisModule,
         UsersModule,
         AuthModule,
         PollsModule,

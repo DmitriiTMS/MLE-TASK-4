@@ -8,7 +8,10 @@ import { PollsRepository } from './polls.repository';
 import { PollsService } from './polls.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([PollEntity]), UsersModule],
+    imports: [
+        TypeOrmModule.forFeature([PollEntity]),
+        UsersModule
+    ],
     controllers: [PollsController],
     providers: [
         Logger,
@@ -22,4 +25,4 @@ import { PollsService } from './polls.service';
         },
     ],
 })
-export class PollsModule {}
+export class PollsModule { }

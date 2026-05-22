@@ -7,6 +7,10 @@ import { PollEntity } from './entities/polls.entity';
 import { IPollsService } from './polls.service.interface';
 import type { IPollsRepository } from './polls.repository.interface';
 import type { IUsersRepository } from '../users/users.repository.interface';
+import { RedisService } from '../redis/redis.service';
+import { PaginatedResponse, PollResponse } from './constants/types';
+import { KEYS_POLL } from './constants/types-redis';
+
 
 @Injectable()
 export class PollsService implements IPollsService {
@@ -16,14 +20,15 @@ export class PollsService implements IPollsService {
         private readonly logger: Logger,
         @Inject('IUsersRepository') private readonly userRepository: IUsersRepository,
         @Inject('IPollsRepository') private readonly pollsRepository: IPollsRepository,
-    ) {}
+        private readonly redisService: RedisService,
+    ) { }
 
     async create(userId: number, data: CreatePollDto): Promise<PollEntity> {
         const startTime = Date.now();
         const operation = 'create';
         this.logger.log(
             `[${this.context}] - Starting ${operation} operation - User ID: ${userId}, ` +
-                `Data: ${JSON.stringify(data)}`,
+            `Data: ${JSON.stringify(data)}`,
         );
         try {
             this.logger.log(`[${this.context}] - Finding user with ID: ${userId}`);
@@ -37,8 +42,10 @@ export class PollsService implements IPollsService {
             const duration = Date.now() - startTime;
             this.logger.log(
                 `[${this.context}] - ${operation} operation completed successfully - ` +
-                    `User ID: ${userId}, Poll ID: ${savedPoll?.id}, Duration: ${duration}ms`,
+                `User ID: ${userId}, Poll ID: ${savedPoll?.id}, Duration: ${duration}ms`,
             );
+
+            await this.redisService.delPattern(KEYS_POLL.POLLS_ALL_PATTERN);
 
             return savedPoll;
         } catch (error) {
@@ -64,16 +71,41 @@ export class PollsService implements IPollsService {
         const startTime = Date.now();
         const operation = 'findAll';
         this.logger.log(`[${this.context}] - Fetching all polls`);
+        const cacheKey = `${KEYS_POLL.POLLS_ALL_PREFIX}${userId}:page:${paginationDto.page}:limit:${paginationDto.limit}`;
+
+        let cachedData = await this.redisService.get<PaginatedResponse>(cacheKey);
 
         try {
-            const polls = await this.pollsRepository.findAll(userId, paginationDto);
+            if (!cachedData) {
+                const dbData = await this.pollsRepository.findAll(userId, paginationDto);
+     
+                const dataToCache: PaginatedResponse = {
+                    data: dbData.data.map(poll => poll.toResponse()),
+                    meta: dbData.meta
+                };
+                await this.redisService.set(cacheKey, dataToCache, 300);
 
-            this.logger.log(
-                `[${this.context}] - Polls fetched successfully` +
-                    `Count: ${polls.data.length}, Duration: ${Date.now() - startTime}ms`,
-            );
+                this.logger.log(
+                    `[${this.context}] - Polls fetched successfully ` +
+                    `Count: ${dbData.data.length}, Duration: ${Date.now() - startTime}ms`,
+                );
 
-            return polls;
+                return dbData;
+            } else {
+                const polls: PollEntity[] = PollEntity.fromJSONArray(cachedData.data);
+
+                const result = {
+                    data: polls,
+                    meta: cachedData.meta
+                };
+
+                this.logger.log(
+                    `[${this.context}] - Polls fetched successfully ` +
+                    `Count: ${polls.length}, Duration: ${Date.now() - startTime}ms`,
+                );
+
+                return result;
+            }
         } catch (error) {
             this.logger.error(`[${this.context}] - ${operation} operation failed`);
             throw error;
@@ -83,30 +115,55 @@ export class PollsService implements IPollsService {
     async findOne(userId: number, pollId: number): Promise<PollEntity> {
         const startTime = Date.now();
         const operation = 'findOne';
+        const cacheKey = `${KEYS_POLL.POLL_ID_PREFIX}${pollId}`;
 
         this.logger.log(`[${this.context}] - Fetching poll, Poll ID: ${pollId}`);
 
         try {
-            const poll = await this.pollsRepository.findById(pollId);
 
-            if (!poll) {
-                this.logger.warn(`[${this.context}] - Finding poll with ID: ${pollId}`);
-                throw new NotFoundException(POLLS_MESSAGE.POLL_NOT_FOUND);
-            }
+            const cachedPoll = await this.redisService.get<PollResponse>(cacheKey);
 
-            if (!poll.belongsToUser(userId) && !poll.isActiveStatus()) {
-                this.logger.warn(
-                    `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
-                );
-                throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
-            }
+            if (!cachedPoll) {
+                const pollEntity = await this.pollsRepository.findById(pollId);
 
-            this.logger.log(
-                `[${this.context}] - Poll fetched successfully, ` +
+                if (!pollEntity) {
+                    this.logger.warn(`[${this.context}] - Poll with ID: ${pollId} not found`);
+                    throw new NotFoundException(POLLS_MESSAGE.POLL_NOT_FOUND);
+                }
+
+                if (!pollEntity.belongsToUser(userId) && !pollEntity.isActiveStatus()) {
+                    this.logger.warn(
+                        `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
+                    );
+                    throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
+                }
+
+                await this.redisService.set(cacheKey, pollEntity.toResponse(), 300);
+
+                this.logger.log(
+                    `[${this.context}] - Poll fetched successfully, ` +
                     `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
-            );
+                );
 
-            return poll;
+                return pollEntity;
+            } else {
+                const pollEntity = PollEntity.fromJSON(cachedPoll);
+
+                if (!pollEntity.belongsToUser(userId) && !pollEntity.isActiveStatus()) {
+                    this.logger.warn(
+                        `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
+                    );
+                    throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
+                }
+
+                this.logger.log(
+                    `[${this.context}] - Poll fetched successfully, ` +
+                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                );
+
+                return pollEntity;
+
+            }
         } catch (error) {
             this.logger.error(`[${this.context}] - ${operation} operation failed`);
             throw error;
@@ -116,6 +173,7 @@ export class PollsService implements IPollsService {
     async update(userId: number, pollId: number, data: UpdatePollDto): Promise<PollEntity> {
         const startTime = Date.now();
         const operation = 'update';
+        const cacheKey = `${KEYS_POLL.POLL_ID_PREFIX}${pollId}`;
 
         this.logger.log(
             `[${this.context}] - Updating poll - User ID: ${userId}, Poll ID: ${pollId}`,
@@ -130,18 +188,22 @@ export class PollsService implements IPollsService {
 
             if (!poll.belongsToUser(userId)) {
                 this.logger.warn(
-                    `[${this.context}] - ${POLLS_MESSAGE.NO_PERMISSION} - Poll ID: ${pollId}`,
+                    `[${this.context}] - ${POLLS_MESSAGE.NO_UPDATE_PERMISSION} - Poll ID: ${pollId}`,
                 );
-                throw new ForbiddenException(POLLS_MESSAGE.NO_PERMISSION);
+                throw new ForbiddenException(POLLS_MESSAGE.NO_UPDATE_PERMISSION);
             }
 
             poll.update(data);
-
             const updatedPoll = await this.pollsRepository.save(poll);
+
+            await Promise.all([
+                this.redisService.set(cacheKey, updatedPoll.toResponse(), 300),
+                this.redisService.delPattern(KEYS_POLL.POLLS_ALL_PATTERN)
+            ]);
 
             this.logger.log(
                 `[${this.context}] - Poll updated successfully - User ID: ${userId}, ` +
-                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return updatedPoll;
@@ -154,6 +216,7 @@ export class PollsService implements IPollsService {
     async remove(userId: number, pollId: number) {
         const startTime = Date.now();
         const operation = 'remove';
+        const cacheKey = `${KEYS_POLL.POLL_ID_PREFIX}${pollId}`;
 
         this.logger.log(
             `[${this.context}] - Deleting poll - User ID: ${userId}, Poll ID: ${pollId}`,
@@ -171,16 +234,21 @@ export class PollsService implements IPollsService {
 
             if (!poll.belongsToUser(userId)) {
                 this.logger.warn(
-                    `[${this.context}] - ${POLLS_MESSAGE.NO_PERMISSION} - Poll ID: ${pollId}`,
+                    `[${this.context}] - ${POLLS_MESSAGE.NO_DELETE_PERMISSION} - Poll ID: ${pollId}`,
                 );
-                throw new ForbiddenException(POLLS_MESSAGE.NO_PERMISSION);
+                throw new ForbiddenException(POLLS_MESSAGE.NO_DELETE_PERMISSION);
             }
 
             await this.pollsRepository.remove(pollId);
 
+            await Promise.all([
+                this.redisService.del(cacheKey),
+                this.redisService.delPattern(KEYS_POLL.POLLS_ALL_PATTERN)
+            ]);
+
             this.logger.log(
                 `[${this.context}] - Poll deleted successfully - User ID: ${userId}, ` +
-                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
             );
         } catch (error) {
             this.logger.error(`[${this.context}] - ${operation} operation failed`);

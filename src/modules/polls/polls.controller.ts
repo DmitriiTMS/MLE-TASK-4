@@ -34,7 +34,7 @@ export class PollsController {
     constructor(
         private readonly logger: Logger,
         @Inject('IPollsService') private readonly pollsService: IPollsService,
-    ) {}
+    ) { }
 
     @Post()
     @UseGuards(ThrottlerGuard)
@@ -49,13 +49,13 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - Creating poll - User ID: ${user.id}, ` +
-                `Data: ${JSON.stringify(createDto)}`,
+            `Data: ${JSON.stringify(createDto)}`,
         );
         try {
             const result = await this.pollsService.create(user.id, createDto);
             this.logger.log(
                 `[${this.context}] - Poll created successfully - User ID: ${user.id}, ` +
-                    `Poll ID: ${result.id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${result.id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -82,7 +82,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Polls fetched successfully` +
-                    `Count: ${result.data.length}, Duration: ${Date.now() - startTime}ms`,
+                `Count: ${result.data.length}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return {
@@ -112,7 +112,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll fetched successfully, ` +
-                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -136,7 +136,7 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - Updating poll - User ID: ${user.id}, Poll ID: ${id}, ` +
-                `Data: ${JSON.stringify(updateDto)}`,
+            `Data: ${JSON.stringify(updateDto)}`,
         );
 
         try {
@@ -144,7 +144,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll updated successfully - User ID: ${user.id}, ` +
-                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -169,7 +169,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll deleted successfully - User ID: ${user.id}, ` +
-                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
         } catch (error) {
             this.logError(error, method, route, { userId: user.id, pollId: id });
@@ -183,7 +183,7 @@ export class PollsController {
 
         this.logger.error(
             `[${this.context}] - Request failed - Method: ${method}, Route: ${route}, ` +
-                `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
+            `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
         );
 
         if (errorStack && process.env.NODE_ENV !== 'production') {

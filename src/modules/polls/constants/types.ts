@@ -1,7 +1,7 @@
 export interface PollResponse {
     id: number;
     title: string;
-    description: string | undefined;
+    description?: string | undefined;
     isActive: boolean;
     createUser: {
         id: number;

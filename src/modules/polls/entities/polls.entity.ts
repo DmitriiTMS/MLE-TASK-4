@@ -8,6 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
+import { PollResponse } from '../constants/types';
 
 @Entity('polls')
 export class PollEntity {
@@ -49,7 +50,7 @@ export class PollEntity {
         const poll = new PollEntity();
         poll.title = title;
         poll.description = description;
-        poll.isActive = true;
+        poll.isActive = false;
         poll.createUser = createUser;
         return poll;
     }
@@ -81,5 +82,27 @@ export class PollEntity {
 
     static toResponseList(polls: PollEntity[]) {
         return polls.map((poll) => poll.toResponse());
+    }
+
+
+    static fromJSON(data: PollResponse): PollEntity {
+        const poll = new PollEntity();
+        poll.id = data.id;
+        poll.title = data.title;
+        poll.description = data.description;
+        poll.isActive = data.isActive;
+
+        const userEntity = new UserEntity();
+        userEntity.id = data.createUser.id;
+        userEntity.name = data.createUser.name;
+        poll.createUser = userEntity;
+
+        return poll;
+    }
+
+
+    static fromJSONArray(dataArray: PollResponse[]): PollEntity[] {
+        if (!Array.isArray(dataArray)) return [];
+        return dataArray.map(data => this.fromJSON(data));
     }
 }
