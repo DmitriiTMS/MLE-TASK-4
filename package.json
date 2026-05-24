@@ -25,7 +25,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e:auth": "yarn test:e2e -- test/auth.e2e-spec.ts",
+    "test:e2e:polls": "yarn test:e2e -- test/polls.e2e-spec.ts",
+    "test:e2e:all": "yarn test:e2e --runInBand"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -49,6 +52,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.20.0",
+    "redis": "^5.12.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.28"
@@ -62,6 +66,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.19.0",
+    "@types/ioredis": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",

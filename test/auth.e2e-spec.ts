@@ -21,12 +21,6 @@ describe('AuthController (e2e)', () => {
         password: 'Test123!',
     };
 
-    const anotherUser = {
-        name: 'Another User',
-        email: 'another@example.com',
-        password: 'Pass456!',
-    };
-
     const shortPasswordUser = {
         name: 'Short Pass',
         email: 'short@example.com',

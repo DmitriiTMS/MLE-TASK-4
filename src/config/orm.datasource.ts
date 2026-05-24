@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
 import migrations from '../modules/database/migrations';
+import { PollEntity } from '../modules/polls/entities/polls.entity';
 import { UserEntity } from '../modules/users/entities/user.entity';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
@@ -15,7 +16,7 @@ export default new DataSource({
     database: process.env.DB_DATABASE,
     port: Number(process.env.DB_PORT),
     synchronize: false,
-    entities: [UserEntity],
+    entities: [UserEntity, PollEntity],
     migrations,
     migrationsTableName: process.env.DB_MIGRATIONS_TABLE_NAME,
 });
