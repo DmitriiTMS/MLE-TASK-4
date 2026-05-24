@@ -9,19 +9,7 @@ import { JwtStrategy } from './utils/jwt/jwt.strategy';
 import { PasswordArgon2Service } from './utils/password/password-argon2.service';
 
 @Module({
-    imports: [
-        JwtTokenModule,
-        PassportModule.register({ defaultStrategy: 'jwt' }),
-        ThrottlerModule.forRoot({
-            throttlers: [
-                {
-                    ttl: 60000,
-                    limit: 5,
-                },
-            ],
-        }),
-        UsersModule,
-    ],
+    imports: [JwtTokenModule, PassportModule.register({ defaultStrategy: 'jwt' }), UsersModule],
     controllers: [AuthController],
     providers: [
         Logger,

@@ -8,6 +8,7 @@ export const swaggerConfig = new DocumentBuilder()
     создавать опросы с разными типами вопросов (мультивыбор, одиночный выбор),
     а другие могут голосовать.`,
     )
+    .addServer('http://localhost:4200/api')
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();
