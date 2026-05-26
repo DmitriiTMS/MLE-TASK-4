@@ -10,7 +10,7 @@ describe('UsersService', () => {
     let userRepository: jest.Mocked<IUsersRepository>;
     let logger: jest.Mocked<Logger>;
 
-    const mockUser: UserEntity = {
+    const mockUser: Partial<UserEntity> = {
         id: 1,
         name: 'John Doe',
         email: 'john@example.com',
@@ -62,7 +62,7 @@ describe('UsersService', () => {
 
     describe('create', () => {
         it('should successfully create a user', async () => {
-            userRepository.createUser.mockResolvedValue(mockUser);
+            userRepository.createUser.mockResolvedValue(mockUser as UserEntity);
 
             const result = await service.create(createUserDto);
 
@@ -122,7 +122,7 @@ describe('UsersService', () => {
                 updatedAt: new Date(),
             };
 
-            userRepository.createUser.mockResolvedValue(emptyUser);
+            userRepository.createUser.mockResolvedValue(emptyUser as UserEntity);
 
             const result = await service.create(invalidDto);
 

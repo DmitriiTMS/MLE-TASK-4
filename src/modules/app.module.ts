@@ -9,6 +9,7 @@ import { DataBaseModule } from './database/database.module';
 import { PollsModule } from './polls/polls.module';
 import { UsersModule } from './users/users.module';
 import { RedisModule } from './redis/redis.module';
+import { QuestionsModule } from './questions/questions.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -32,6 +33,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         UsersModule,
         AuthModule,
         PollsModule,
+        QuestionsModule
     ],
 })
 export class AppModule {}

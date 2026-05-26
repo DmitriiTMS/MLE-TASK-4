@@ -4,11 +4,13 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { PollResponse } from '../constants/types';
+import { QuestionEntity } from '../../questions/entities/questions.entity';
 
 @Entity('polls')
 export class PollEntity {
@@ -33,6 +35,9 @@ export class PollEntity {
     @ManyToOne(() => UserEntity, (user) => user.polls, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'create_user_id' })
     createUser: UserEntity;
+
+    @OneToMany(() => QuestionEntity, (question) => question.poll, { cascade: true })
+    questions: QuestionEntity[];
 
     belongsToUser(userId: number): boolean {
         return this.createUser?.id === userId;
