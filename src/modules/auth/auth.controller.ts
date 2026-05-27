@@ -22,6 +22,7 @@ import { ApiRefreshTokenDocumentation } from './decorators/swagger-refresh-token
 import { ApiRegisterDocumentation } from './decorators/swagger-register.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { AUTH_INJECTION_TOKENS } from './types/constants/auth-injection-tokens';
 import { LogMessages } from './types/constants/log-messages.constants';
 import { JwtAuthGuard } from './utils/jwt/jwt-auth.guard';
 import type { IAuthService } from './auth.service.interface';
@@ -40,7 +41,7 @@ export class AuthController {
 
     constructor(
         private readonly logger: Logger,
-        @Inject('IAuthService') private readonly authService: IAuthService,
+        @Inject(AUTH_INJECTION_TOKENS.IAUTH_SERVICE) private readonly authService: IAuthService,
     ) {}
 
     @Post('register')

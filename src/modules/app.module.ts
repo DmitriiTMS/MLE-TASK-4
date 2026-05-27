@@ -7,9 +7,9 @@ import { validateConfig } from '../config/validation.config';
 import { AuthModule } from './auth/auth.module';
 import { DataBaseModule } from './database/database.module';
 import { PollsModule } from './polls/polls.module';
-import { UsersModule } from './users/users.module';
-import { RedisModule } from './redis/redis.module';
 import { QuestionsModule } from './questions/questions.module';
+import { RedisModule } from './redis/redis.module';
+import { UsersModule } from './users/users.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -33,7 +33,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         UsersModule,
         AuthModule,
         PollsModule,
-        QuestionsModule
+        QuestionsModule,
     ],
 })
 export class AppModule {}

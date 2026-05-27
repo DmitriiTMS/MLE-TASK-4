@@ -10,10 +10,9 @@ import {
     ApiBadRequestResponse,
     ApiBearerAuth,
 } from '@nestjs/swagger';
-import { UpdatePollDto } from '../../dto/update-poll.dto';
-import { POLLS_MESSAGE } from '../../constants/types.message';
 import { PollResponse } from '../../constants/types';
-
+import { POLLS_MESSAGE } from '../../constants/types.message';
+import { UpdatePollDto } from '../../dto/update-poll.dto';
 
 export function ApiUpdatePollDocumentation() {
     return applyDecorators(

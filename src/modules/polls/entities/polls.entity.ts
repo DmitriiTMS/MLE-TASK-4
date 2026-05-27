@@ -8,9 +8,9 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { QuestionEntity } from '../../questions/entities/questions.entity';
 import { UserEntity } from '../../users/entities/user.entity';
 import { PollResponse } from '../constants/types';
-import { QuestionEntity } from '../../questions/entities/questions.entity';
 
 @Entity('polls')
 export class PollEntity {
@@ -64,7 +64,9 @@ export class PollEntity {
         return poll;
     }
 
-    update(data: Partial<Pick<PollEntity, 'title' | 'description' | 'isActive' | 'isPublic'>>): void {
+    update(
+        data: Partial<Pick<PollEntity, 'title' | 'description' | 'isActive' | 'isPublic'>>,
+    ): void {
         if (data.title !== undefined) {
             this.title = data.title;
         }
@@ -74,7 +76,7 @@ export class PollEntity {
         if (data.isActive !== undefined) {
             this.isActive = data.isActive;
         }
-         if (data.isPublic !== undefined) {
+        if (data.isPublic !== undefined) {
             this.isPublic = data.isPublic;
         }
     }
@@ -97,7 +99,6 @@ export class PollEntity {
         return polls.map((poll) => poll.toResponse());
     }
 
-
     static fromJSON(data: PollResponse): PollEntity {
         const poll = new PollEntity();
         poll.id = data.id;
@@ -114,9 +115,8 @@ export class PollEntity {
         return poll;
     }
 
-
     static fromJSONArray(dataArray: PollResponse[]): PollEntity[] {
         if (!Array.isArray(dataArray)) return [];
-        return dataArray.map(data => this.fromJSON(data));
+        return dataArray.map((data) => this.fromJSON(data));
     }
 }

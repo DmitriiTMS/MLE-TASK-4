@@ -70,7 +70,7 @@ export class PollsRepository implements IPollsRepository {
             .take(limit)
             .orderBy('poll.createdAt', 'DESC');
 
-        const [polls, total] = await queryBuilder.getManyAndCount()
+        const [polls, total] = await queryBuilder.getManyAndCount();
 
         return {
             data: polls,

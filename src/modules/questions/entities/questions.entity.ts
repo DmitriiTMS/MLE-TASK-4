@@ -1,8 +1,16 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { PollEntity } from "../../polls/entities/polls.entity";
-import { QuestionOptionEntity } from "./question-options.entity";
-
-
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { PollEntity } from '../../polls/entities/polls.entity';
+import { IResponseQuestion } from '../constants/types';
+import { QuestionOptionEntity } from './question-options.entity';
 
 export type QuestionType = 'single' | 'multiple';
 
@@ -36,4 +44,33 @@ export class QuestionEntity {
     @OneToMany(() => QuestionOptionEntity, (option) => option.question, { cascade: true })
     questionOptions: QuestionOptionEntity[];
 
+    static createInstance(
+        pollId: number,
+        text: string,
+        orderNum: number,
+        type: QuestionType,
+    ): QuestionEntity {
+        const question = new QuestionEntity();
+        question.pollId = pollId;
+        question.text = text;
+        question.orderNum = orderNum;
+        question.type = type;
+        return question;
+    }
+
+    static toResponse(data: QuestionEntity): IResponseQuestion {
+        return {
+            id: data.id,
+            pollId: data.pollId,
+            text: data.text,
+            type: data.type,
+            orderNum: data.orderNum,
+            questionOptions: data.questionOptions.map((option) => {
+                return {
+                    text: option.text,
+                    orderNum: option.orderNum,
+                };
+            }),
+        };
+    }
 }

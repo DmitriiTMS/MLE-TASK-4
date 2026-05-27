@@ -5,12 +5,11 @@ import { AddQuestionEntity1779805942012 } from './1779805942012-AddQuestionEntit
 import { AddQuestionOptionEntity1779806039605 } from './1779806039605-AddQuestionOptionEntity';
 import { AddColumnIsPublicInPollEntity1779868337388 } from './1779868337388-AddColumnIsPublicInPollEntity';
 
-
 export default [
     AddUserEntity1777626621479,
     RenamePasswordColumnUserEntity1777808168800,
     AddPollEntity1778933169439,
     AddQuestionEntity1779805942012,
     AddQuestionOptionEntity1779806039605,
-    AddColumnIsPublicInPollEntity1779868337388
+    AddColumnIsPublicInPollEntity1779868337388,
 ];
