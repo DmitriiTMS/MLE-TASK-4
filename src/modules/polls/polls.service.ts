@@ -131,7 +131,7 @@ export class PollsService implements IPollsService {
                     throw new NotFoundException(POLLS_MESSAGE.POLL_NOT_FOUND);
                 }
 
-                if (!pollEntity.belongsToUser(userId) && !pollEntity.isActiveStatus()) {
+                if (!pollEntity.belongsToUser(userId) && !pollEntity.isPublicStatus()) {
                     this.logger.warn(
                         `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
                     );
@@ -149,7 +149,7 @@ export class PollsService implements IPollsService {
             } else {
                 const pollEntity = PollEntity.fromJSON(cachedPoll);
 
-                if (!pollEntity.belongsToUser(userId) && !pollEntity.isActiveStatus()) {
+                if (!pollEntity.belongsToUser(userId) && !pollEntity.isPublicStatus()) {
                     this.logger.warn(
                         `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
                     );

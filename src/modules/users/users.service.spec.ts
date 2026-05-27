@@ -5,6 +5,8 @@ import { UserEntity } from './entities/user.entity';
 import { IUsersRepository } from './users.repository.interface';
 import { UsersService } from './users.service';
 
+// yarn test -- src/modules/users/users.service.spec.ts
+
 describe('UsersService', () => {
     let service: UsersService;
     let userRepository: jest.Mocked<IUsersRepository>;

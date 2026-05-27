@@ -30,6 +30,12 @@ export class PollResponse {
     isActive: boolean;
 
     @ApiProperty({
+        example: false,
+        description: 'Статус публичности опроса',
+    })
+    isPublic: boolean;
+
+    @ApiProperty({
         type: 'object',
         properties: {
             id: { type: 'number', example: 1, description: 'ID создателя' },
@@ -53,6 +59,7 @@ export class PaginatedResponse {
                 title: 'Мой первый опрос',
                 description: 'Это пример опроса',
                 isActive: false,
+                isPublic: true,
                 createUser: {
                     id: 1,
                     name: 'Иван Иванов',

@@ -26,6 +26,9 @@ export class PollEntity {
     @Column({ type: 'boolean', name: 'is_active', default: true })
     isActive: boolean;
 
+    @Column({ type: 'boolean', name: 'is_public', default: false })
+    isPublic: boolean;
+
     @CreateDateColumn({ type: 'timestamptz', name: 'created_at', nullable: false })
     createdAt: Date;
 
@@ -43,8 +46,8 @@ export class PollEntity {
         return this.createUser?.id === userId;
     }
 
-    isActiveStatus(): boolean {
-        return this.isActive === true;
+    isPublicStatus(): boolean {
+        return this.isPublic === true;
     }
 
     static createInstance(
@@ -55,12 +58,13 @@ export class PollEntity {
         const poll = new PollEntity();
         poll.title = title;
         poll.description = description;
-        poll.isActive = false;
+        poll.isActive = true;
+        poll.isPublic = false;
         poll.createUser = createUser;
         return poll;
     }
 
-    update(data: Partial<Pick<PollEntity, 'title' | 'description' | 'isActive'>>): void {
+    update(data: Partial<Pick<PollEntity, 'title' | 'description' | 'isActive' | 'isPublic'>>): void {
         if (data.title !== undefined) {
             this.title = data.title;
         }
@@ -70,6 +74,9 @@ export class PollEntity {
         if (data.isActive !== undefined) {
             this.isActive = data.isActive;
         }
+         if (data.isPublic !== undefined) {
+            this.isPublic = data.isPublic;
+        }
     }
 
     toResponse() {
@@ -78,6 +85,7 @@ export class PollEntity {
             title: this.title,
             description: this.description,
             isActive: this.isActive,
+            isPublic: this.isPublic,
             createUser: {
                 id: this.createUser.id,
                 name: this.createUser.name,
@@ -96,6 +104,7 @@ export class PollEntity {
         poll.title = data.title;
         poll.description = data.description;
         poll.isActive = data.isActive;
+        poll.isPublic = data.isPublic;
 
         const userEntity = new UserEntity();
         userEntity.id = data.createUser.id;
