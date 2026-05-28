@@ -10,6 +10,7 @@ import {
     Param,
     ParseIntPipe,
     Post,
+    Put,
     UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -23,6 +24,7 @@ import { QuestionEntity } from './entities/questions.entity';
 import type { IQuestionsService } from './questions.service.interface';
 import { PollEntity } from '../polls/entities/polls.entity';
 import { PollWithQuestions } from '../polls/constants/types';
+import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
 
 @ApiTags('Вопросы')
 @Controller('polls/:pollId/questions')
@@ -120,13 +122,45 @@ export class QuestionsController {
         }
     }
 
+    @Put(':questionId')
+    @HttpCode(HttpStatus.OK)
+    async updateQuestion(
+        @CurrentUser() user: { id: number },
+        @Param('pollId', ParseIntPipe) pollId: number,
+        @Param('questionId', ParseIntPipe) questionId: number,
+        @Body() updateData: UpdateQuestionWithOptionsDto,
+    ): Promise<IResponseQuestion> {
+        const method = 'PUT';
+        const route = `/polls/${pollId}/questions/${questionId}`;
+
+        this.logger.log(`[${this.context}] - Updating question ${questionId}`);
+
+        try {
+            const question = await this.questionsService.updateQuestion({
+                userId: user.id,
+                pollId,
+                questionId,
+                updateData
+            });
+
+            this.logger.log(
+                `[${this.context}] - Question updated successfully: ${questionId}`,
+            );
+
+            return QuestionEntity.toResponse(question);
+        } catch (error) {
+            this.logError(error, method, route);
+            throw error;
+        }
+    }
+
     @Delete(':questionId')
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteQuestion(
         @CurrentUser() user: { id: number },
         @Param('pollId', ParseIntPipe) pollId: number,
         @Param('questionId', ParseIntPipe) questionId: number,
-    ) {
+    ): Promise<void> {
         const method = 'DELETE';
         const route = `/polls/${pollId}/questions/${questionId}`;
 

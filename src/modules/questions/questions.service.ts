@@ -5,11 +5,12 @@ import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-toke
 import { IDataRequestQuestion } from './constants/types';
 import { QUESTIONS_MESSAGE } from './constants/types.messages';
 import { QuestionOptionEntity } from './entities/question-options.entity';
-import { QuestionEntity } from './entities/questions.entity';
+import { QuestionEntity, QuestionType } from './entities/questions.entity';
 import type { IQuestionsRepository } from './questions.repository.interface';
 import type { IQuestionsService } from './questions.service.interface';
 import type { IPollsRepository } from '../polls/polls.repository.interface';
 import { PollEntity } from '../polls/entities/polls.entity';
+import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
 
 @Injectable()
 export class QuestionsService implements IQuestionsService {
@@ -142,6 +143,61 @@ export class QuestionsService implements IQuestionsService {
         return question;
     }
 
+    async updateQuestion(
+        data: {
+            userId: number;
+            pollId: number;
+            questionId: number;
+            updateData: UpdateQuestionWithOptionsDto;
+        }
+    ): Promise<QuestionEntity> {
+        const operation = 'updateQuestion';
+        const { userId, pollId, questionId, updateData } = data;
+
+        const poll = await this.pollsRepository.findById(pollId);
+        if (!poll) {
+            this.logger.warn(
+                `[${this.context}] - [${operation}] - Poll with ID: ${pollId} not found`,
+            );
+            throw new NotFoundException(POLLS_MESSAGE.POLL_NOT_FOUND);
+        }
+
+        if (!poll.belongsToUser(userId)) {
+            this.logger.warn(
+                `[${this.context}] - [${operation}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
+            );
+            throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
+        }
+
+        const existingQuestion = await this.questionsRepository.findQuestion(pollId, questionId);
+        if (!existingQuestion) {
+            this.logger.warn(
+                `[${this.context}] - [${operation}] - ${QUESTIONS_MESSAGE.QUESTION_NOT_FOUND} with ID: ${questionId}`,
+            );
+            throw new NotFoundException(QUESTIONS_MESSAGE.QUESTION_NOT_FOUND);
+        }
+
+
+        const updatedQuestion = QuestionEntity.updateWithOptions({
+            id: existingQuestion.id,
+            pollId: existingQuestion.pollId,
+            text: updateData.text,
+            type: updateData.type,
+            orderNum: updateData.orderNum,
+            questionOptions: updateData.options.map((opt, index) => {
+                return {
+                    id: existingQuestion.questionOptions?.[index]?.id,
+                    text: opt.text,
+                    orderNum: opt.orderNum
+                }
+            })
+        });
+
+        const updatedQuestionDb = await this.questionsRepository.updateQuestionWithOptions(updatedQuestion);
+
+        return updatedQuestionDb;
+    }
+
     async deleteQuestionWithOptions(data: {
         userId: number,
         pollId: number,
@@ -175,4 +231,6 @@ export class QuestionsService implements IQuestionsService {
 
         await this.questionsRepository.deleteQuestionWithOptions(pollId, questionId)
     }
+
+
 }

@@ -58,6 +58,48 @@ export class QuestionEntity {
         return question;
     }
 
+    static updateWithOptions(
+        question: {
+            id: number,
+            pollId: number,
+            text?: string,
+            type?: QuestionType,
+            orderNum?: number,
+            questionOptions: {
+                id: number,
+                text?: string;
+                orderNum?: number;
+            }[]
+        },
+    ): QuestionEntity {
+        const updatedQuestion = new QuestionEntity();
+        updatedQuestion.id = question.id;
+        updatedQuestion.pollId = question.pollId;
+        if (question.text) {
+            updatedQuestion.text = question.text;
+        }
+        if (question.type) {
+            updatedQuestion.type = question.type;
+        }
+        if (question.orderNum) {
+            updatedQuestion.orderNum = question.orderNum;
+        }
+
+        updatedQuestion.questionOptions = question.questionOptions.map(opt => {
+            const option = new QuestionOptionEntity();
+            option.id = opt.id;
+            if (opt.text) {
+                option.text = opt.text;
+            }
+            if (opt.orderNum) {
+                option.orderNum = opt.orderNum;
+            }
+            return option;
+        });
+
+        return updatedQuestion;
+    }
+
     static toResponse(data: QuestionEntity): IResponseQuestion {
         return {
             id: data.id,

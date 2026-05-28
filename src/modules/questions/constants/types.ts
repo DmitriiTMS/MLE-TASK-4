@@ -1,5 +1,10 @@
 import { CreateQuestionWithOptionsDto } from '../dto/create-question-with-options.dto';
 
+export enum QuestionType {
+    SINGLE = 'single',
+    MULTIPLE = 'multiple',
+}
+
 export interface IDataRequestQuestion {
     userId: number;
     pollId: number;

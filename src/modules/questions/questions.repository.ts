@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { QuestionOptionEntity } from './entities/question-options.entity';
@@ -14,6 +14,7 @@ export class QuestionsRepository implements IQuestionsRepository {
         private readonly logger: Logger,
         @InjectRepository(QuestionEntity)
         private readonly questionRepository: Repository<QuestionEntity>,
+        @InjectRepository(QuestionOptionEntity)
         private readonly dataSource: DataSource,
         @InjectRepository(PollEntity)
         private readonly pollRepository: Repository<PollEntity>,
@@ -25,9 +26,10 @@ export class QuestionsRepository implements IQuestionsRepository {
     ): Promise<QuestionEntity> {
         try {
             return await this.dataSource.transaction(async (transactionalEntityManager) => {
-                const savedQuestion = await transactionalEntityManager.save(question);
+                const savedQuestion = await transactionalEntityManager.save(QuestionEntity, question);
 
                 const savedOptions = await transactionalEntityManager.save(
+                    QuestionOptionEntity,
                     questionOptions.map((option) => {
                         option.questionId = savedQuestion.id;
                         return option;
@@ -80,6 +82,59 @@ export class QuestionsRepository implements IQuestionsRepository {
                 }
             }
         });
+    }
+
+    async updateQuestionWithOptions(question: QuestionEntity): Promise<QuestionEntity> {
+        try {
+            for (const option of question.questionOptions) {
+                if (!option.id) {
+                    throw new NotFoundException(`Option for questionId:${question.id} not found`);
+                }
+            }
+
+            await this.dataSource.transaction(async (transactionalEntityManager) => {
+                await transactionalEntityManager.update(
+                    QuestionEntity,
+                    { id: question.id, pollId: question.pollId },
+                    {
+                        text: question.text,
+                        type: question.type,
+                        orderNum: question.orderNum,
+                    }
+                );
+
+                if (question.questionOptions && question.questionOptions.length > 0) {
+                    for (const option of question.questionOptions) {
+                        if (option.id) {
+                            await transactionalEntityManager.update(
+                                QuestionOptionEntity,
+                                {
+                                    id: option.id,
+                                    questionId: question.id
+                                },
+                                {
+                                    text: option.text,
+                                    orderNum: option.orderNum
+                                }
+                            );
+                        }
+                    }
+                }
+            });
+
+            const updatedQuestion = await this.findQuestion(question.pollId, question.id);
+
+            if (!updatedQuestion) {
+                throw new NotFoundException(`Question with id ${question.id} not found after update`);
+            }
+
+            this.logger.log(`${this.context} - Question with options saved successfully: ${question.id}`);
+
+            return updatedQuestion;
+        } catch (error: unknown) {
+            this.logger.error(`${this.context} - transaction failed: ${error}`);
+            throw error;
+        }
     }
 
     async deleteQuestionWithOptions(pollId: number, questionId: number): Promise<void> {
