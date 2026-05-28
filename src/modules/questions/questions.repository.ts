@@ -81,4 +81,10 @@ export class QuestionsRepository implements IQuestionsRepository {
             }
         });
     }
+
+    async deleteQuestionWithOptions(pollId: number, questionId: number): Promise<void> {
+        await this.questionRepository.delete({
+            pollId, id: questionId
+        })
+    }
 }

@@ -9,4 +9,5 @@ export interface IQuestionsRepository {
     ): Promise<QuestionEntity>;
     findPollWithQuestions(pollId: number, isOwner: boolean): Promise<PollEntity | null>;
     findQuestion(pollId: number, questionId: number): Promise<QuestionEntity | null>
+    deleteQuestionWithOptions(pollId: number, questionId: number): Promise<void>
 }

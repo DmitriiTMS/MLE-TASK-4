@@ -75,7 +75,7 @@ export class QuestionsController {
         try {
             const result = await this.questionsService.findPollWithAllQuestions(user.id, pollId);
             this.logger.log(
-                `[${this.context}] - Poll with questions fetched successfully PollId: ${JSON.stringify(result.id)}`,
+                `[${this.context}] - Poll with questions fetched successfully PollId: ${result.id}`,
             );
             return PollEntity.toResponsePollWithQuestions(result)
 
@@ -110,7 +110,7 @@ export class QuestionsController {
         try {
             const question = await this.questionsService.findQuestion(data);
             this.logger.log(
-                `[${this.context}] - question fetched successfully QuestionId: ${JSON.stringify(question.id)}`,
+                `[${this.context}] - question fetched successfully QuestionId: ${question.id}`,
             );
             return QuestionEntity.toResponse(question);
 
@@ -143,12 +143,10 @@ export class QuestionsController {
         }
 
         try {
-            // const question = await this.questionsService.findQuestion(data);
-            // this.logger.log(
-            //     `[${this.context}] - question fetched successfully QuestionId: ${JSON.stringify(question.id)}`,
-            // );
-            // return QuestionEntity.toResponse(question);
-
+            await this.questionsService.deleteQuestionWithOptions(data);
+            this.logger.log(
+                `[${this.context}] - question delete successfully QuestionId: ${questionId}`,
+            );
         } catch (error) {
             this.logError(error, method, route);
             throw error;
