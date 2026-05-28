@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpCode,
     HttpStatus,
@@ -60,7 +61,6 @@ export class QuestionsController {
         }
     }
 
-
     @Get()
     @HttpCode(HttpStatus.OK)
     async findPollWithAllQuestions(
@@ -91,24 +91,70 @@ export class QuestionsController {
         @CurrentUser() user: { id: number },
         @Param('pollId', ParseIntPipe) pollId: number,
         @Param('questionId', ParseIntPipe) questionId: number,
-    ) {
+    ): Promise<IResponseQuestion> {
         const method = 'GET';
         const route = `/polls/${pollId}/questions/${questionId}`;
 
         this.logger.log(`[${this.context}] - fetching question`);
 
+        const data: {
+            userId: number,
+            pollId: number,
+            questionId: number
+        } = {
+            userId: user.id,
+            pollId,
+            questionId
+        }
+
         try {
-            // const result = await this.questionsService.findPollWithAllQuestions(user.id, pollId);
-            // this.logger.log(
-            //     `[${this.context}] - Poll with questions fetched successfully PollId: ${JSON.stringify(result.id)}`,
-            // );
-            // return PollEntity.toResponsePollWithQuestions(result)
+            const question = await this.questionsService.findQuestion(data);
+            this.logger.log(
+                `[${this.context}] - question fetched successfully QuestionId: ${JSON.stringify(question.id)}`,
+            );
+            return QuestionEntity.toResponse(question);
 
         } catch (error) {
             this.logError(error, method, route);
             throw error;
         }
     }
+
+    @Delete(':questionId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async deleteQuestion(
+        @CurrentUser() user: { id: number },
+        @Param('pollId', ParseIntPipe) pollId: number,
+        @Param('questionId', ParseIntPipe) questionId: number,
+    ) {
+        const method = 'DELETE';
+        const route = `/polls/${pollId}/questions/${questionId}`;
+
+        this.logger.log(`[${this.context}] - delete question`);
+
+        const data: {
+            userId: number,
+            pollId: number,
+            questionId: number
+        } = {
+            userId: user.id,
+            pollId,
+            questionId
+        }
+
+        try {
+            // const question = await this.questionsService.findQuestion(data);
+            // this.logger.log(
+            //     `[${this.context}] - question fetched successfully QuestionId: ${JSON.stringify(question.id)}`,
+            // );
+            // return QuestionEntity.toResponse(question);
+
+        } catch (error) {
+            this.logError(error, method, route);
+            throw error;
+        }
+    }
+
 
     private logError(error: unknown, method: string, route: string, context?: any): void {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';

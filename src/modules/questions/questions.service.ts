@@ -72,7 +72,7 @@ export class QuestionsService implements IQuestionsService {
         }
     }
 
-    async findPollWithAllQuestions(userId: number, pollId: number): Promise<PollEntity | null> {
+    async findPollWithAllQuestions(userId: number, pollId: number): Promise<PollEntity> {
         const operation = 'findPollWithAllQuestions';
 
         const poll = await this.pollsRepository.findById(pollId);
@@ -91,15 +91,54 @@ export class QuestionsService implements IQuestionsService {
         }
 
         const isOwner = poll.belongsToUser(userId);
-        const pollWithQuestionsPublic = await this.questionsRepository.findPollWithQuestions(pollId, isOwner);
+        const pollWithQuestions = await this.questionsRepository.findPollWithQuestions(pollId, isOwner);
 
-        if (!pollWithQuestionsPublic) {
+
+        if (!pollWithQuestions) {
             this.logger.warn(
                 `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
             );
             throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
         }
 
-        return pollWithQuestionsPublic;
+
+
+        return pollWithQuestions;
+    }
+
+    async findQuestion(
+        data: {
+            userId: number,
+            pollId: number,
+            questionId: number
+        }
+    ): Promise<QuestionEntity> {
+        const operation = 'findQuestion';
+        const { userId, pollId, questionId } = data
+
+        const poll = await this.pollsRepository.findById(pollId);
+        if (!poll) {
+            this.logger.warn(
+                `[${this.context}] - [${operation}] - Poll with ID: ${pollId} not found`,
+            );
+            throw new NotFoundException(POLLS_MESSAGE.POLL_NOT_FOUND);
+        }
+
+        if (!poll.belongsToUser(userId)) {
+            this.logger.warn(
+                `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
+            );
+            throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
+        }
+
+        const question = await this.questionsRepository.findQuestion(pollId, questionId)
+        if (!question) {
+            this.logger.warn(
+                `[${this.context}] - ${QUESTIONS_MESSAGE.QUESTION_NOT_FOUND} with ID: ${questionId}`,
+            );
+            throw new NotFoundException(QUESTIONS_MESSAGE.QUESTION_NOT_FOUND);
+        }
+
+        return question;
     }
 }

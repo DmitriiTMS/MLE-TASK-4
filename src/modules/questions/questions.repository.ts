@@ -44,8 +44,8 @@ export class QuestionsRepository implements IQuestionsRepository {
     }
 
     async findPollWithQuestions(pollId: number, isOwner: boolean = false): Promise<PollEntity | null> {
-        const whereCondition: {id: number, isPublic?: boolean} = { id: pollId };
-        
+        const whereCondition: { id: number, isPublic?: boolean } = { id: pollId };
+
         if (!isOwner) {
             whereCondition.isPublic = true;
         }
@@ -63,6 +63,20 @@ export class QuestionsRepository implements IQuestionsRepository {
                     questionOptions: {
                         orderNum: 'ASC'
                     }
+                }
+            }
+        });
+    }
+
+    async findQuestion(pollId: number, questionId: number): Promise<QuestionEntity | null> {
+        return await this.questionRepository.findOne({
+            where: { id: questionId, pollId },
+            relations: {
+                questionOptions: true
+            },
+            order: {
+                questionOptions: {
+                    orderNum: 'ASC'
                 }
             }
         });

@@ -7,5 +7,6 @@ export interface IQuestionsRepository {
         question: QuestionEntity,
         questionOptions: QuestionOptionEntity[],
     ): Promise<QuestionEntity>;
-    findPollWithQuestions(pollId: number, isOwner: boolean): Promise<PollEntity | null>
+    findPollWithQuestions(pollId: number, isOwner: boolean): Promise<PollEntity | null>;
+    findQuestion(pollId: number, questionId: number): Promise<QuestionEntity | null>
 }

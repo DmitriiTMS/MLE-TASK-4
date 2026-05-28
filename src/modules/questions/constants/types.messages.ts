@@ -3,4 +3,5 @@ export const QUESTIONS_MESSAGE = {
         'You cannot create questions - you are not the creator of the poll.',
     QUESTION_CREATED: 'Question created successfully',
     QUESTION_NOT_CREATED: 'Question not created',
+    QUESTION_NOT_FOUND: 'Question not found',
 };
