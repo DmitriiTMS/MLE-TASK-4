@@ -28,7 +28,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:e2e:auth": "yarn test:e2e -- test/auth.e2e-spec.ts",
     "test:e2e:polls": "yarn test:e2e -- test/polls.e2e-spec.ts",
-    "test:e2e:all": "yarn test:e2e --runInBand"
+    "test:e2e:all": "yarn test:e2e --runInBand",
+    "seed": "ts-node -r tsconfig-paths/register src/modules/database/seed/run-seed.ts",
+    "seed:refresh": "yarn seed && echo 'Seeding completed'"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

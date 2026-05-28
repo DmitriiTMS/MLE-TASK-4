@@ -3,4 +3,5 @@ import { QuestionEntity } from './entities/questions.entity';
 
 export interface IQuestionsService {
     createQuestionWithOptions(data: IDataRequestQuestion): Promise<QuestionEntity>;
+    findPollWithAllQuestions(userId: number, pollId: number): any
 }

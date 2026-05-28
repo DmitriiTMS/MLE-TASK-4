@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { QuestionEntity } from '../../questions/entities/questions.entity';
 import { UserEntity } from '../../users/entities/user.entity';
-import { PollResponse } from '../constants/types';
+import { PollResponse, PollWithQuestions } from '../constants/types';
 
 @Entity('polls')
 export class PollEntity {
@@ -118,5 +118,30 @@ export class PollEntity {
     static fromJSONArray(dataArray: PollResponse[]): PollEntity[] {
         if (!Array.isArray(dataArray)) return [];
         return dataArray.map((data) => this.fromJSON(data));
+    }
+
+    static toResponsePollWithQuestions(data: PollEntity): PollWithQuestions {
+        return {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            isActive: data.isActive,
+            isPublic: data.isPublic,
+            questions: data.questions.map((question) => {
+                return {
+                    id: question.id,
+                    text: question.text,
+                    type: question.type,
+                    orderNum: question.orderNum,
+                    questionOptions: question.questionOptions.map((option) => {
+                        return {
+                            id: option.id,
+                            text: option.text,
+                            orderNum: option.orderNum,
+                        };
+                    }),
+                };
+            }),
+        };
     }
 }

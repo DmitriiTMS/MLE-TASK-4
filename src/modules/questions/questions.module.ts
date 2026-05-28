@@ -7,9 +7,17 @@ import { QuestionEntity } from './entities/questions.entity';
 import { QuestionsController } from './questions.controller';
 import { QuestionsRepository } from './questions.repository';
 import { QuestionsService } from './questions.service';
+import { PollEntity } from '../polls/entities/polls.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([QuestionEntity, QuestionOptionEntity]), PollsModule],
+    imports: [
+        TypeOrmModule.forFeature([
+            PollEntity,
+            QuestionEntity,
+            QuestionOptionEntity
+        ]),
+        PollsModule
+    ],
     controllers: [QuestionsController],
     providers: [
         Logger,
@@ -23,4 +31,4 @@ import { QuestionsService } from './questions.service';
         },
     ],
 })
-export class QuestionsModule {}
+export class QuestionsModule { }

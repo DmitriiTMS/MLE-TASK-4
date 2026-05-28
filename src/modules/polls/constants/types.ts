@@ -86,3 +86,115 @@ export class PaginatedResponse {
         totalPages: number;
     };
 }
+
+
+export class QuestionOptionDto {
+    @ApiProperty({
+        description: 'Unique identifier of the question option',
+        example: 1,
+        type: Number,
+    })
+    id: number;
+
+    @ApiProperty({
+        description: 'Text of the question option',
+        example: 'JavaScript/TypeScript',
+        type: String,
+    })
+    text: string;
+
+    @ApiProperty({
+        description: 'Order number of the option in the question (for sorting)',
+        example: 1,
+        minimum: 1,
+        type: Number,
+    })
+    orderNum: number;
+}
+
+export class QuestionDto {
+    @ApiProperty({
+        description: 'Unique identifier of the question',
+        example: 1,
+        type: Number,
+    })
+    id: number;
+
+    @ApiProperty({
+        description: 'Text of the question',
+        example: 'Какой язык программирования вы предпочитаете?',
+        type: String,
+    })
+    text: string;
+
+    @ApiProperty({
+        description: 'Type of the question (single choice or multiple choice)',
+        example: 'single',
+        enum: ['single', 'multiple'],
+        enumName: 'QuestionType',
+    })
+    type: string;
+
+    @ApiProperty({
+        description: 'Order number of the question in the poll (for sorting)',
+        example: 1,
+        minimum: 1,
+        type: Number,
+    })
+    orderNum: number;
+
+    @ApiProperty({
+        description: 'List of answer options for the question',
+        type: [QuestionOptionDto],
+    })
+    questionOptions: QuestionOptionDto[];
+}
+
+export class PollWithQuestions {
+    @ApiProperty({
+        description: 'Unique identifier of the poll',
+        example: 1,
+        type: Number,
+    })
+    id: number;
+
+    @ApiProperty({
+        description: 'Title of the poll',
+        example: 'Опрос о предпочтениях в IT',
+        maxLength: 255,
+        type: String,
+    })
+    title: string;
+
+    @ApiProperty({
+        description: 'Detailed description of the poll',
+        example: 'Расскажите о ваших предпочтениях в программировании',
+        required: false,
+        nullable: true,
+        maxLength: 3000,
+        type: String,
+    })
+    description?: string;
+
+    @ApiProperty({
+        description: 'Whether the poll is active and accepting responses',
+        example: true,
+        default: true,
+        type: Boolean,
+    })
+    isActive: boolean;
+
+    @ApiProperty({
+        description: 'Whether the poll is publicly accessible',
+        example: false,
+        default: false,
+        type: Boolean,
+    })
+    isPublic: boolean;
+
+    @ApiProperty({
+        description: 'List of questions in the poll',
+        type: [QuestionDto],
+    })
+    questions: QuestionDto[];
+}

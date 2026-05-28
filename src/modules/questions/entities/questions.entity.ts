@@ -67,6 +67,7 @@ export class QuestionEntity {
             orderNum: data.orderNum,
             questionOptions: data.questionOptions.map((option) => {
                 return {
+                    id: option.id,
                     text: option.text,
                     orderNum: option.orderNum,
                 };

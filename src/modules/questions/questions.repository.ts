@@ -4,6 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { QuestionOptionEntity } from './entities/question-options.entity';
 import { QuestionEntity } from './entities/questions.entity';
 import { IQuestionsRepository } from './questions.repository.interface';
+import { PollEntity } from '../polls/entities/polls.entity';
 
 @Injectable()
 export class QuestionsRepository implements IQuestionsRepository {
@@ -13,10 +14,10 @@ export class QuestionsRepository implements IQuestionsRepository {
         private readonly logger: Logger,
         @InjectRepository(QuestionEntity)
         private readonly questionRepository: Repository<QuestionEntity>,
-        @InjectRepository(QuestionOptionEntity)
-        private readonly questionOptionRepository: Repository<QuestionOptionEntity>,
         private readonly dataSource: DataSource,
-    ) {}
+        @InjectRepository(PollEntity)
+        private readonly pollRepository: Repository<PollEntity>,
+    ) { }
 
     async createQuestion(
         question: QuestionEntity,
@@ -40,5 +41,30 @@ export class QuestionsRepository implements IQuestionsRepository {
             this.logger.error(`${this.context} - transaction failed: ${error}`);
             throw error;
         }
+    }
+
+    async findPollWithQuestions(pollId: number, isOwner: boolean = false): Promise<PollEntity | null> {
+        const whereCondition: {id: number, isPublic?: boolean} = { id: pollId };
+        
+        if (!isOwner) {
+            whereCondition.isPublic = true;
+        }
+
+        return await this.pollRepository.findOne({
+            where: whereCondition,
+            relations: {
+                questions: {
+                    questionOptions: true
+                }
+            },
+            order: {
+                questions: {
+                    orderNum: 'ASC',
+                    questionOptions: {
+                        orderNum: 'ASC'
+                    }
+                }
+            }
+        });
     }
 }

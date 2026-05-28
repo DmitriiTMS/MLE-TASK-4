@@ -9,6 +9,7 @@ import { QuestionEntity } from './entities/questions.entity';
 import type { IQuestionsRepository } from './questions.repository.interface';
 import type { IQuestionsService } from './questions.service.interface';
 import type { IPollsRepository } from '../polls/polls.repository.interface';
+import { PollEntity } from '../polls/entities/polls.entity';
 
 @Injectable()
 export class QuestionsService implements IQuestionsService {
@@ -21,10 +22,10 @@ export class QuestionsService implements IQuestionsService {
         private readonly pollsRepository: IPollsRepository,
         @Inject(QUESTIONS_INJECTION_TOKENS.IQUESTIONS_REPOSITORY)
         private readonly questionsRepository: IQuestionsRepository,
-    ) {}
+    ) { }
 
     async createQuestionWithOptions(data: IDataRequestQuestion): Promise<QuestionEntity> {
-        const operation = 'create';
+        const operation = 'createQuestionWithOptions';
         const { userId, pollId, createQuestionDto } = data;
 
         const poll = await this.pollsRepository.findById(pollId);
@@ -69,5 +70,36 @@ export class QuestionsService implements IQuestionsService {
             );
             throw error;
         }
+    }
+
+    async findPollWithAllQuestions(userId: number, pollId: number): Promise<PollEntity | null> {
+        const operation = 'findPollWithAllQuestions';
+
+        const poll = await this.pollsRepository.findById(pollId);
+        if (!poll) {
+            this.logger.warn(
+                `[${this.context}] - [${operation}] - Poll with ID: ${pollId} not found`,
+            );
+            throw new NotFoundException(POLLS_MESSAGE.POLL_NOT_FOUND);
+        }
+
+        if (!poll.belongsToUser(userId) && !poll.isPublicStatus()) {
+            this.logger.warn(
+                `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
+            );
+            throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
+        }
+
+        const isOwner = poll.belongsToUser(userId);
+        const pollWithQuestionsPublic = await this.questionsRepository.findPollWithQuestions(pollId, isOwner);
+
+        if (!pollWithQuestionsPublic) {
+            this.logger.warn(
+                `[${this.context}] - ${POLLS_MESSAGE.SURVEY_NOT_AVAILABLE} with ID: ${pollId}`,
+            );
+            throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
+        }
+
+        return pollWithQuestionsPublic;
     }
 }
