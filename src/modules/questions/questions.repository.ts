@@ -14,10 +14,9 @@ export class QuestionsRepository implements IQuestionsRepository {
         private readonly logger: Logger,
         @InjectRepository(QuestionEntity)
         private readonly questionRepository: Repository<QuestionEntity>,
-        @InjectRepository(QuestionOptionEntity)
-        private readonly dataSource: DataSource,
         @InjectRepository(PollEntity)
         private readonly pollRepository: Repository<PollEntity>,
+        private readonly dataSource: DataSource,
     ) { }
 
     async createQuestion(

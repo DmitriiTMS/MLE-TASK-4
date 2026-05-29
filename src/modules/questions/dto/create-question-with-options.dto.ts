@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+    ArrayMinSize,
     IsArray,
     IsEnum,
     IsInt,
@@ -48,6 +49,7 @@ export class CreateQuestionWithOptionsDto {
     orderNum: number;
 
     @IsArray({ message: "Поле 'options' должно быть массивом" })
+    @ArrayMinSize(1, { message: "Поле 'options' должно содержать хотя бы один элемент" })
     @ValidateNested({
         each: true,
         message: 'Каждый элемент options должен быть валидным объектом OptionDto',
