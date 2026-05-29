@@ -11,10 +11,10 @@ import {
     ApiForbiddenResponse,
     ApiParam,
 } from '@nestjs/swagger';
-import { UpdateQuestionWithOptionsDto } from '../../dto/update-question-with-options.dto';
+import { POLLS_MESSAGE } from '../../../../polls/constants/types.message';
 import { ResponseQuestionDto } from '../../constants/types';
-import { POLLS_MESSAGE } from '../../../polls/constants/types.message';
 import { QUESTIONS_MESSAGE } from '../../constants/types.messages';
+import { UpdateQuestionWithOptionsDto } from '../../dto/update-question-with-options.dto';
 
 export function ApiUpdateQuestionDocumentation() {
     return applyDecorators(

@@ -1,10 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateQuestionWithOptionsDto } from '../dto/create-question-with-options.dto';
 
-export enum QuestionType {
-    SINGLE = 'single',
-    MULTIPLE = 'multiple',
-}
+
 export class DataRequestQuestionDto {
     @ApiProperty({
         description: 'ID пользователя',
@@ -25,7 +22,6 @@ export class DataRequestQuestionDto {
         type: CreateQuestionWithOptionsDto,
     })
     createQuestionDto: CreateQuestionWithOptionsDto;
-
 }
 
 export class ResponseQuestionOptionDto {
@@ -58,7 +54,6 @@ export class ResponseQuestionOptionDto {
         required: true,
     })
     orderNum: number;
-
 }
 
 export class ResponseQuestionDto {
@@ -103,5 +98,4 @@ export class ResponseQuestionDto {
         type: [ResponseQuestionOptionDto],
     })
     questionOptions: ResponseQuestionOptionDto[];
-
 }

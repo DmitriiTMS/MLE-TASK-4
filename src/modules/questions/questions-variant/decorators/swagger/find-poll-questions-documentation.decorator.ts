@@ -8,9 +8,8 @@ import {
     ApiForbiddenResponse,
     ApiParam,
 } from '@nestjs/swagger';
-import { PollWithQuestions } from '../../../polls/constants/types';
-import { POLLS_MESSAGE } from '../../../polls/constants/types.message';
-
+import { PollWithQuestions } from '../../../../polls/constants/types';
+import { POLLS_MESSAGE } from '../../../../polls/constants/types.message';
 
 export function ApiFindPollQuestionsDocumentation() {
     return applyDecorators(

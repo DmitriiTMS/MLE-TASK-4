@@ -1,39 +1,40 @@
-// documentation/find-question-documentation.decorator.ts
+// documentation/delete-question-documentation.decorator.ts
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import {
     ApiOperation,
-    ApiOkResponse,
+    ApiNoContentResponse,
     ApiUnauthorizedResponse,
     ApiNotFoundResponse,
     ApiBearerAuth,
     ApiForbiddenResponse,
     ApiParam,
 } from '@nestjs/swagger';
-import { ResponseQuestionDto } from '../../constants/types';
-import { POLLS_MESSAGE } from '../../../polls/constants/types.message';
+
+import { POLLS_MESSAGE } from '../../../../polls/constants/types.message';
 import { QUESTIONS_MESSAGE } from '../../constants/types.messages';
 
-
-export function ApiFindQuestionDocumentation() {
+export function ApiDeleteQuestionDocumentation() {
     return applyDecorators(
         ApiOperation({
-            summary: 'Получение конкретного вопроса',
+            summary: 'Удаление вопроса',
             description: `
-Возвращает конкретный вопрос с его вариантами ответов.
+Удаляет вопрос и все связанные с ним варианты ответов.
 
-**Права доступа:**
-- Владелец опроса видит любой вопрос своего опроса
-- Другие пользователи видят вопросы только публичных опросов
+**Требования:**
+- Пользователь должен быть авторизован
+- Пользователь должен быть владельцем опроса
 
-**Процесс получения:**
+**Процесс удаления:**
 1. Проверяется существование опроса
-2. Проверяется существование вопроса в опросе
-3. Проверяются права доступа
-4. Возвращается вопрос с вариантами ответов
+2. Проверяется, что пользователь является владельцем опроса
+3. Проверяется существование вопроса в опросе
+4. Удаляется вопрос (варианты ответов удаляются автоматически благодаря CASCADE)
+5. Возвращается статус 204 No Content
 
 **Примечания:**
-- Варианты ответов возвращаются в порядке возрастания orderNum
-- Вопрос возвращается только если он принадлежит указанному опросу
+- Удаление вопроса необратимо
+- Все ответы пользователей на этот вопрос также будут удалены (если есть каскадное удаление)
+- Варианты ответов удаляются автоматически благодаря CASCADE в базе данных
             `,
         }),
         ApiParam({
@@ -45,29 +46,14 @@ export function ApiFindQuestionDocumentation() {
         }),
         ApiParam({
             name: 'questionId',
-            description: 'ID вопроса',
+            description: 'ID вопроса для удаления',
             example: 1,
             type: Number,
             required: true,
         }),
         ApiBearerAuth(),
-        ApiOkResponse({
-            description: 'Вопрос успешно получен',
-            type: ResponseQuestionDto,
-            schema: {
-                example: {
-                    id: 1,
-                    pollId: 1,
-                    text: 'Какой язык программирования вы используете?',
-                    type: 'single',
-                    orderNum: 0,
-                    questionOptions: [
-                        { id: 1, questionId: 1, text: 'JavaScript', orderNum: 1 },
-                        { id: 2, questionId: 1, text: 'Python', orderNum: 2 },
-                        { id: 3, questionId: 1, text: 'Java', orderNum: 3 },
-                    ],
-                },
-            },
+        ApiNoContentResponse({
+            description: 'Вопрос успешно удален (не возвращает тела ответа)',
         }),
         ApiUnauthorizedResponse({
             description: 'Пользователь не авторизован',
@@ -80,7 +66,7 @@ export function ApiFindQuestionDocumentation() {
             },
         }),
         ApiForbiddenResponse({
-            description: 'Доступ запрещен (опрос не публичный и пользователь не владелец)',
+            description: 'Доступ запрещен (пользователь не владелец опроса)',
             schema: {
                 example: {
                     statusCode: HttpStatus.FORBIDDEN,

@@ -8,7 +8,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { QuestionEntity } from '../../questions/entities/questions.entity';
+import { QuestionEntity } from '../../questions/questions-variant/entities/questions.entity';
 import { UserEntity } from '../../users/entities/user.entity';
 import { PollResponse, PollWithQuestions } from '../constants/types';
 

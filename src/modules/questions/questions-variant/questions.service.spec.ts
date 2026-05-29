@@ -2,17 +2,17 @@ import { ForbiddenException, Logger, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { QuestionsService } from './questions.service';
 import { IQuestionsRepository } from './questions.repository.interface';
-import { IPollsRepository } from '../polls/polls.repository.interface';
-import { PollEntity } from '../polls/entities/polls.entity';
+import { IPollsRepository } from '../../polls/polls.repository.interface';
+import { PollEntity } from '../../polls/entities/polls.entity';
 import { QuestionEntity } from './entities/questions.entity';
-import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
-import { IDataRequestQuestion, QuestionType } from './constants/types';
+import { DataRequestQuestionDto, QuestionType } from './constants/types';
 import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
-import { POLLS_MESSAGE } from '../polls/constants/types.message';
+import { POLLS_MESSAGE } from '../../polls/constants/types.message';
 import { QUESTIONS_MESSAGE } from './constants/types.messages';
-import { UserEntity } from '../users/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
-import { POLL_INJECTION_TOKENS } from '../polls/constants/poll-injection-tokens';
+import { POLL_INJECTION_TOKENS } from '../../polls/constants/poll-injection-tokens';
+import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 
 // yarn test -- src/modules/questions/questions.service.spec.ts
 
@@ -163,7 +163,7 @@ describe('QuestionsService', () => {
     });
 
     describe('createQuestionWithOptions', () => {
-        const data: IDataRequestQuestion = {
+        const data: DataRequestQuestionDto = {
             userId: 100,
             pollId: 1,
             createQuestionDto,

@@ -3,8 +3,8 @@ import { DataSource } from 'typeorm';
 
 import migrations from '../modules/database/migrations';
 import { PollEntity } from '../modules/polls/entities/polls.entity';
-import { QuestionOptionEntity } from '../modules/question-options/entities/question-options.entity';
-import { QuestionEntity } from '../modules/questions/entities/questions.entity';
+import { QuestionOptionEntity } from '../modules/questions/question-options/entities/question-options.entity';
+import { QuestionEntity } from '../modules/questions/questions-variant/entities/questions.entity';
 import { UserEntity } from '../modules/users/entities/user.entity';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;

@@ -8,9 +8,9 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { PollEntity } from '../../polls/entities/polls.entity';
-import { ResponseQuestionDto } from '../constants/types';
+import { PollEntity } from '../../../polls/entities/polls.entity';
 import { QuestionOptionEntity } from '../../question-options/entities/question-options.entity';
+import { ResponseQuestionDto } from '../constants/types';
 
 export type QuestionType = 'single' | 'multiple';
 
@@ -58,20 +58,18 @@ export class QuestionEntity {
         return question;
     }
 
-    static updateWithOptions(
-        question: {
-            id: number,
-            pollId: number,
-            text?: string,
-            type?: QuestionType,
-            orderNum?: number,
-            questionOptions: {
-                id: number,
-                text?: string;
-                orderNum?: number;
-            }[]
-        },
-    ): QuestionEntity {
+    static updateWithOptions(question: {
+        id: number;
+        pollId: number;
+        text?: string;
+        type?: QuestionType;
+        orderNum?: number;
+        questionOptions: {
+            id: number;
+            text?: string;
+            orderNum?: number;
+        }[];
+    }): QuestionEntity {
         const updatedQuestion = new QuestionEntity();
         updatedQuestion.id = question.id;
         updatedQuestion.pollId = question.pollId;
@@ -85,7 +83,7 @@ export class QuestionEntity {
             updatedQuestion.orderNum = question.orderNum;
         }
 
-        updatedQuestion.questionOptions = question.questionOptions.map(opt => {
+        updatedQuestion.questionOptions = question.questionOptions.map((opt) => {
             const option = new QuestionOptionEntity();
             option.id = opt.id;
             if (opt.text) {

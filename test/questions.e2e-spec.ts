@@ -9,8 +9,9 @@ import { DataSource, Repository } from 'typeorm';
 import { AppModule } from '../src/modules/app.module';
 import { UserEntity } from '../src/modules/users/entities/user.entity';
 import { PollEntity } from '../src/modules/polls/entities/polls.entity';
-import { QuestionEntity } from '../src/modules/questions/entities/questions.entity';
-import { QuestionOptionEntity } from '../src/modules/question-options/entities/question-options.entity';
+import { QuestionEntity } from '../src/modules/questions/questions-variant/entities/questions.entity';
+import { QuestionOptionEntity } from '../src/modules/questions/question-options/entities/question-options.entity';
+
 
 describe('QuestionsController (e2e)', () => {
     let app: INestApplication;

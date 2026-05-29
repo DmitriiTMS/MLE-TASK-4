@@ -1,16 +1,16 @@
 import { ForbiddenException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { POLL_INJECTION_TOKENS } from '../polls/constants/poll-injection-tokens';
-import { POLLS_MESSAGE } from '../polls/constants/types.message';
+import { POLL_INJECTION_TOKENS } from '../../polls/constants/poll-injection-tokens';
+import { POLLS_MESSAGE } from '../../polls/constants/types.message';
+import { PollEntity } from '../../polls/entities/polls.entity';
+import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
 import { DataRequestQuestionDto } from './constants/types';
 import { QUESTIONS_MESSAGE } from './constants/types.messages';
-import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
-import { QuestionEntity, QuestionType } from './entities/questions.entity';
+import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
+import { QuestionEntity } from './entities/questions.entity';
 import type { IQuestionsRepository } from './questions.repository.interface';
 import type { IQuestionsService } from './questions.service.interface';
-import type { IPollsRepository } from '../polls/polls.repository.interface';
-import { PollEntity } from '../polls/entities/polls.entity';
-import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
+import type { IPollsRepository } from '../../polls/polls.repository.interface';
 
 @Injectable()
 export class QuestionsService implements IQuestionsService {
@@ -23,7 +23,7 @@ export class QuestionsService implements IQuestionsService {
         private readonly pollsRepository: IPollsRepository,
         @Inject(QUESTIONS_INJECTION_TOKENS.IQUESTIONS_REPOSITORY)
         private readonly questionsRepository: IQuestionsRepository,
-    ) { }
+    ) {}
 
     async createQuestionWithOptions(data: DataRequestQuestionDto): Promise<QuestionEntity> {
         const operation = 'createQuestionWithOptions';
@@ -92,8 +92,10 @@ export class QuestionsService implements IQuestionsService {
         }
 
         const isOwner = poll.belongsToUser(userId);
-        const pollWithQuestions = await this.questionsRepository.findPollWithQuestions(pollId, isOwner);
-
+        const pollWithQuestions = await this.questionsRepository.findPollWithQuestions(
+            pollId,
+            isOwner,
+        );
 
         if (!pollWithQuestions) {
             this.logger.warn(
@@ -102,20 +104,16 @@ export class QuestionsService implements IQuestionsService {
             throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
         }
 
-
-
         return pollWithQuestions;
     }
 
-    async findQuestion(
-        data: {
-            userId: number,
-            pollId: number,
-            questionId: number
-        }
-    ): Promise<QuestionEntity> {
+    async findQuestion(data: {
+        userId: number;
+        pollId: number;
+        questionId: number;
+    }): Promise<QuestionEntity> {
         const operation = 'findQuestion';
-        const { userId, pollId, questionId } = data
+        const { userId, pollId, questionId } = data;
 
         const poll = await this.pollsRepository.findById(pollId);
         if (!poll) {
@@ -132,7 +130,7 @@ export class QuestionsService implements IQuestionsService {
             throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
         }
 
-        const question = await this.questionsRepository.findQuestion(pollId, questionId)
+        const question = await this.questionsRepository.findQuestion(pollId, questionId);
         if (!question) {
             this.logger.warn(
                 `[${this.context}] - ${QUESTIONS_MESSAGE.QUESTION_NOT_FOUND} with ID: ${questionId}`,
@@ -143,14 +141,12 @@ export class QuestionsService implements IQuestionsService {
         return question;
     }
 
-    async updateQuestion(
-        data: {
-            userId: number;
-            pollId: number;
-            questionId: number;
-            updateData: UpdateQuestionWithOptionsDto;
-        }
-    ): Promise<QuestionEntity> {
+    async updateQuestion(data: {
+        userId: number;
+        pollId: number;
+        questionId: number;
+        updateData: UpdateQuestionWithOptionsDto;
+    }): Promise<QuestionEntity> {
         const operation = 'updateQuestion';
         const { userId, pollId, questionId, updateData } = data;
 
@@ -177,7 +173,6 @@ export class QuestionsService implements IQuestionsService {
             throw new NotFoundException(QUESTIONS_MESSAGE.QUESTION_NOT_FOUND);
         }
 
-
         const updatedQuestion = QuestionEntity.updateWithOptions({
             id: existingQuestion.id,
             pollId: existingQuestion.pollId,
@@ -188,23 +183,24 @@ export class QuestionsService implements IQuestionsService {
                 return {
                     id: existingQuestion.questionOptions?.[index]?.id,
                     text: opt.text,
-                    orderNum: opt.orderNum
-                }
-            })
+                    orderNum: opt.orderNum,
+                };
+            }),
         });
 
-        const updatedQuestionDb = await this.questionsRepository.updateQuestionWithOptions(updatedQuestion);
+        const updatedQuestionDb =
+            await this.questionsRepository.updateQuestionWithOptions(updatedQuestion);
 
         return updatedQuestionDb;
     }
 
     async deleteQuestionWithOptions(data: {
-        userId: number,
-        pollId: number,
-        questionId: number
+        userId: number;
+        pollId: number;
+        questionId: number;
     }): Promise<void> {
         const operation = 'deleteQuestionWithOptions';
-        const { userId, pollId, questionId } = data
+        const { userId, pollId, questionId } = data;
 
         const poll = await this.pollsRepository.findById(pollId);
         if (!poll) {
@@ -221,7 +217,7 @@ export class QuestionsService implements IQuestionsService {
             throw new ForbiddenException(POLLS_MESSAGE.SURVEY_NOT_AVAILABLE);
         }
 
-        const question = await this.questionsRepository.findQuestion(pollId, questionId)
+        const question = await this.questionsRepository.findQuestion(pollId, questionId);
         if (!question) {
             this.logger.warn(
                 `[${this.context}] - ${QUESTIONS_MESSAGE.QUESTION_NOT_FOUND} with ID: ${questionId}`,
@@ -229,8 +225,6 @@ export class QuestionsService implements IQuestionsService {
             throw new NotFoundException(QUESTIONS_MESSAGE.QUESTION_NOT_FOUND);
         }
 
-        await this.questionsRepository.deleteQuestionWithOptions(pollId, questionId)
+        await this.questionsRepository.deleteQuestionWithOptions(pollId, questionId);
     }
-
-
 }

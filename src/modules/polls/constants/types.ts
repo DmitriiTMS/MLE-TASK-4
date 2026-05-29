@@ -87,7 +87,6 @@ export class PaginatedResponse {
     };
 }
 
-
 export class QuestionOptionDto {
     @ApiProperty({
         description: 'Unique identifier of the question option',

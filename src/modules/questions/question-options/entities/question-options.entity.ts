@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { QuestionEntity } from '../../questions/entities/questions.entity';
+import { QuestionEntity } from '../../questions-variant/entities/questions.entity';
+import { ICreateOptionResponseData } from '../constants/types';
 
 @Entity('question_options')
 export class QuestionOptionEntity {
@@ -31,5 +32,13 @@ export class QuestionOptionEntity {
         questionsOption.text = text;
         questionsOption.orderNum = orderNum;
         return questionsOption;
+    }
+
+    static toResponse(data: QuestionOptionEntity): ICreateOptionResponseData {
+        return {
+            id: data.id,
+            text: data.text,
+            orderNum: data.orderNum,
+        };
     }
 }

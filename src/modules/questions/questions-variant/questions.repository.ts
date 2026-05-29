@@ -1,10 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { PollEntity } from '../../polls/entities/polls.entity';
 import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 import { QuestionEntity } from './entities/questions.entity';
 import { IQuestionsRepository } from './questions.repository.interface';
-import { PollEntity } from '../polls/entities/polls.entity';
 
 @Injectable()
 export class QuestionsRepository implements IQuestionsRepository {
@@ -17,7 +17,7 @@ export class QuestionsRepository implements IQuestionsRepository {
         @InjectRepository(PollEntity)
         private readonly pollRepository: Repository<PollEntity>,
         private readonly dataSource: DataSource,
-    ) { }
+    ) {}
 
     async createQuestion(
         question: QuestionEntity,
@@ -25,7 +25,10 @@ export class QuestionsRepository implements IQuestionsRepository {
     ): Promise<QuestionEntity> {
         try {
             return await this.dataSource.transaction(async (transactionalEntityManager) => {
-                const savedQuestion = await transactionalEntityManager.save(QuestionEntity, question);
+                const savedQuestion = await transactionalEntityManager.save(
+                    QuestionEntity,
+                    question,
+                );
 
                 const savedOptions = await transactionalEntityManager.save(
                     QuestionOptionEntity,
@@ -44,8 +47,11 @@ export class QuestionsRepository implements IQuestionsRepository {
         }
     }
 
-    async findPollWithQuestions(pollId: number, isOwner: boolean = false): Promise<PollEntity | null> {
-        const whereCondition: { id: number, isPublic?: boolean } = { id: pollId };
+    async findPollWithQuestions(
+        pollId: number,
+        isOwner: boolean = false,
+    ): Promise<PollEntity | null> {
+        const whereCondition: { id: number; isPublic?: boolean } = { id: pollId };
 
         if (!isOwner) {
             whereCondition.isPublic = true;
@@ -55,17 +61,17 @@ export class QuestionsRepository implements IQuestionsRepository {
             where: whereCondition,
             relations: {
                 questions: {
-                    questionOptions: true
-                }
+                    questionOptions: true,
+                },
             },
             order: {
                 questions: {
                     orderNum: 'ASC',
                     questionOptions: {
-                        orderNum: 'ASC'
-                    }
-                }
-            }
+                        orderNum: 'ASC',
+                    },
+                },
+            },
         });
     }
 
@@ -73,13 +79,13 @@ export class QuestionsRepository implements IQuestionsRepository {
         return await this.questionRepository.findOne({
             where: { id: questionId, pollId },
             relations: {
-                questionOptions: true
+                questionOptions: true,
             },
             order: {
                 questionOptions: {
-                    orderNum: 'ASC'
-                }
-            }
+                    orderNum: 'ASC',
+                },
+            },
         });
     }
 
@@ -99,7 +105,7 @@ export class QuestionsRepository implements IQuestionsRepository {
                         text: question.text,
                         type: question.type,
                         orderNum: question.orderNum,
-                    }
+                    },
                 );
 
                 if (question.questionOptions && question.questionOptions.length > 0) {
@@ -109,12 +115,12 @@ export class QuestionsRepository implements IQuestionsRepository {
                                 QuestionOptionEntity,
                                 {
                                     id: option.id,
-                                    questionId: question.id
+                                    questionId: question.id,
                                 },
                                 {
                                     text: option.text,
-                                    orderNum: option.orderNum
-                                }
+                                    orderNum: option.orderNum,
+                                },
                             );
                         }
                     }
@@ -124,10 +130,14 @@ export class QuestionsRepository implements IQuestionsRepository {
             const updatedQuestion = await this.findQuestion(question.pollId, question.id);
 
             if (!updatedQuestion) {
-                throw new NotFoundException(`Question with id ${question.id} not found after update`);
+                throw new NotFoundException(
+                    `Question with id ${question.id} not found after update`,
+                );
             }
 
-            this.logger.log(`${this.context} - Question with options saved successfully: ${question.id}`);
+            this.logger.log(
+                `${this.context} - Question with options saved successfully: ${question.id}`,
+            );
 
             return updatedQuestion;
         } catch (error: unknown) {
@@ -138,7 +148,14 @@ export class QuestionsRepository implements IQuestionsRepository {
 
     async deleteQuestionWithOptions(pollId: number, questionId: number): Promise<void> {
         await this.questionRepository.delete({
-            pollId, id: questionId
-        })
+            pollId,
+            id: questionId,
+        });
+    }
+
+    async findOneQuestion(questionId: number): Promise<QuestionEntity | null> {
+        return await this.questionRepository.findOne({
+            where: { id: questionId },
+        });
     }
 }

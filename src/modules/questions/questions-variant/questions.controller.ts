@@ -15,21 +15,21 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../auth/utils/jwt/jwt-auth.guard';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../auth/utils/jwt/jwt-auth.guard';
+import { PollWithQuestions } from '../../polls/constants/types';
+import { PollEntity } from '../../polls/entities/polls.entity';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
 import { DataRequestQuestionDto, ResponseQuestionDto } from './constants/types';
-import { CreateQuestionWithOptionsDto } from './dto/create-question-with-options.dto';
-import { QuestionEntity } from './entities/questions.entity';
-import type { IQuestionsService } from './questions.service.interface';
-import { PollEntity } from '../polls/entities/polls.entity';
-import { PollWithQuestions } from '../polls/constants/types';
-import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
 import { ApiCreateQuestionDocumentation } from './decorators/swagger/create-questions.decorator';
+import { ApiDeleteQuestionDocumentation } from './decorators/swagger/delete-question-documentation.decorator';
 import { ApiFindPollQuestionsDocumentation } from './decorators/swagger/find-poll-questions-documentation.decorator';
 import { ApiFindQuestionDocumentation } from './decorators/swagger/find-question-documentation.decorator';
 import { ApiUpdateQuestionDocumentation } from './decorators/swagger/update-question-documentation.decorator';
-import { ApiDeleteQuestionDocumentation } from './decorators/swagger/delete-question-documentation.decorator';
+import { CreateQuestionWithOptionsDto } from './dto/create-question-with-options.dto';
+import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
+import { QuestionEntity } from './entities/questions.entity';
+import type { IQuestionsService } from './questions.service.interface';
 
 @ApiTags('Вопросы')
 @Controller('polls/:pollId/questions')
@@ -41,7 +41,7 @@ export class QuestionsController {
         private readonly logger: Logger,
         @Inject(QUESTIONS_INJECTION_TOKENS.IQUESTIONS_SERVICE)
         private readonly questionsService: IQuestionsService,
-    ) { }
+    ) {}
 
     @Post()
     @UseGuards(ThrottlerGuard)
@@ -86,8 +86,7 @@ export class QuestionsController {
             this.logger.log(
                 `[${this.context}] - Poll with questions fetched successfully PollId: ${result.id}`,
             );
-            return PollEntity.toResponsePollWithQuestions(result)
-
+            return PollEntity.toResponsePollWithQuestions(result);
         } catch (error) {
             this.logError(error, method, route);
             throw error;
@@ -108,14 +107,14 @@ export class QuestionsController {
         this.logger.log(`[${this.context}] - fetching question`);
 
         const data: {
-            userId: number,
-            pollId: number,
-            questionId: number
+            userId: number;
+            pollId: number;
+            questionId: number;
         } = {
             userId: user.id,
             pollId,
-            questionId
-        }
+            questionId,
+        };
 
         try {
             const question = await this.questionsService.findQuestion(data);
@@ -123,7 +122,6 @@ export class QuestionsController {
                 `[${this.context}] - question fetched successfully QuestionId: ${question.id}`,
             );
             return QuestionEntity.toResponse(question);
-
         } catch (error) {
             this.logError(error, method, route);
             throw error;
@@ -150,12 +148,10 @@ export class QuestionsController {
                 userId: user.id,
                 pollId,
                 questionId,
-                updateData
+                updateData,
             });
 
-            this.logger.log(
-                `[${this.context}] - Question updated successfully: ${questionId}`,
-            );
+            this.logger.log(`[${this.context}] - Question updated successfully: ${questionId}`);
 
             return QuestionEntity.toResponse(question);
         } catch (error) {
@@ -178,14 +174,14 @@ export class QuestionsController {
         this.logger.log(`[${this.context}] - delete question`);
 
         const data: {
-            userId: number,
-            pollId: number,
-            questionId: number
+            userId: number;
+            pollId: number;
+            questionId: number;
         } = {
             userId: user.id,
             pollId,
-            questionId
-        }
+            questionId,
+        };
 
         try {
             await this.questionsService.deleteQuestionWithOptions(data);
@@ -198,14 +194,13 @@ export class QuestionsController {
         }
     }
 
-
     private logError(error: unknown, method: string, route: string, context?: any): void {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         const errorStack = error instanceof Error ? error.stack : undefined;
 
         this.logger.error(
             `[${this.context}] - Request failed - Method: ${method}, Route: ${route}, ` +
-            `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
+                `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
         );
 
         if (errorStack && process.env.NODE_ENV !== 'production') {
