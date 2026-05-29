@@ -2,7 +2,7 @@ import { ForbiddenException, Inject, Injectable, Logger, NotFoundException } fro
 import { POLL_INJECTION_TOKENS } from '../polls/constants/poll-injection-tokens';
 import { POLLS_MESSAGE } from '../polls/constants/types.message';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
-import { IDataRequestQuestion } from './constants/types';
+import { DataRequestQuestionDto } from './constants/types';
 import { QUESTIONS_MESSAGE } from './constants/types.messages';
 import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 import { QuestionEntity, QuestionType } from './entities/questions.entity';
@@ -25,7 +25,7 @@ export class QuestionsService implements IQuestionsService {
         private readonly questionsRepository: IQuestionsRepository,
     ) { }
 
-    async createQuestionWithOptions(data: IDataRequestQuestion): Promise<QuestionEntity> {
+    async createQuestionWithOptions(data: DataRequestQuestionDto): Promise<QuestionEntity> {
         const operation = 'createQuestionWithOptions';
         const { userId, pollId, createQuestionDto } = data;
 
