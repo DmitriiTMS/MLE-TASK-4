@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { QuestionOptionEntity } from './entities/question-options.entity';
+import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 import { QuestionEntity } from './entities/questions.entity';
 import { IQuestionsRepository } from './questions.repository.interface';
 import { PollEntity } from '../polls/entities/polls.entity';

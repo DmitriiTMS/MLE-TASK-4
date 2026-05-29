@@ -4,7 +4,7 @@ import { POLLS_MESSAGE } from '../polls/constants/types.message';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
 import { IDataRequestQuestion } from './constants/types';
 import { QUESTIONS_MESSAGE } from './constants/types.messages';
-import { QuestionOptionEntity } from './entities/question-options.entity';
+import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 import { QuestionEntity, QuestionType } from './entities/questions.entity';
 import type { IQuestionsRepository } from './questions.repository.interface';
 import type { IQuestionsService } from './questions.service.interface';

@@ -2,7 +2,7 @@ import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PollsModule } from '../polls/polls.module';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
-import { QuestionOptionEntity } from './entities/question-options.entity';
+import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 import { QuestionEntity } from './entities/questions.entity';
 import { QuestionsController } from './questions.controller';
 import { QuestionsRepository } from './questions.repository';

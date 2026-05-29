@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { PollEntity } from '../../polls/entities/polls.entity';
 import { IResponseQuestion } from '../constants/types';
-import { QuestionOptionEntity } from './question-options.entity';
+import { QuestionOptionEntity } from '../../question-options/entities/question-options.entity';
 
 export type QuestionType = 'single' | 'multiple';
 

@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { PollEntity } from '../../polls/entities/polls.entity';
 import { QuestionEntity } from '../../questions/entities/questions.entity';
-import { QuestionOptionEntity } from '../../questions/entities/question-options.entity';
+import { QuestionOptionEntity } from '../../question-options/entities/question-options.entity';
 import * as argon2 from 'argon2';
 import * as dotenv from 'dotenv';
 
