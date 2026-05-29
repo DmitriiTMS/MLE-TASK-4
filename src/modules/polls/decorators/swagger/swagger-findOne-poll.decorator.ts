@@ -8,9 +8,8 @@ import {
     ApiUnauthorizedResponse,
     ApiBearerAuth,
 } from '@nestjs/swagger';
-import { POLLS_MESSAGE } from '../../constants/types.message';
 import { PollResponse } from '../../constants/types';
-
+import { POLLS_MESSAGE } from '../../constants/types.message';
 
 export function ApiFindOnePollDocumentation() {
     return applyDecorators(

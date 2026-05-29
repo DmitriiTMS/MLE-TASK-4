@@ -23,6 +23,7 @@ export class PollsRepository implements IPollsRepository {
                 title: true,
                 description: true,
                 isActive: true,
+                isPublic: true,
                 createdAt: true,
                 updatedAt: true,
                 createUser: {
@@ -54,14 +55,15 @@ export class PollsRepository implements IPollsRepository {
                 'poll.title',
                 'poll.description',
                 'poll.isActive',
+                'poll.isPublic',
                 'poll.createdAt',
                 'poll.updatedAt',
                 'createUser.id',
                 'createUser.name',
                 'createUser.email',
             ])
-            .where('poll.isActive = :isActive OR poll.createUser.id = :userId', {
-                isActive: true,
+            .where('poll.isPublic = :isPublic OR poll.createUser.id = :userId', {
+                isPublic: true,
                 userId,
             })
             .skip(skip)
@@ -90,6 +92,7 @@ export class PollsRepository implements IPollsRepository {
                 title: true,
                 description: true,
                 isActive: true,
+                isPublic: true,
                 createdAt: true,
                 updatedAt: true,
                 createUser: {

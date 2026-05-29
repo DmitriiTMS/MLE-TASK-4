@@ -100,7 +100,8 @@ describe('PollsController (e2e)', () => {
                     expect(res.body).toHaveProperty('id');
                     expect(res.body.title).toBe(testPoll.title);
                     expect(res.body.description).toBe(testPoll.description);
-                    expect(res.body.isActive).toBe(false);
+                    expect(res.body.isActive).toBe(true);
+                    expect(res.body.isPublic).toBe(false);
                     expect(res.body.createUser).toHaveProperty('id');
                     expect(res.body.createUser).toHaveProperty('name');
                 });
@@ -259,7 +260,8 @@ describe('PollsController (e2e)', () => {
                     expect(res.body.id).toBe(pollId);
                     expect(res.body.title).toBe(testPoll.title);
                     expect(res.body.description).toBe(testPoll.description);
-                    expect(res.body.isActive).toBe(false);
+                    expect(res.body.isActive).toBe(true);
+                    expect(res.body.isPublic).toBe(false);
                 });
         });
 

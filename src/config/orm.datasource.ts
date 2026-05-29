@@ -3,6 +3,8 @@ import { DataSource } from 'typeorm';
 
 import migrations from '../modules/database/migrations';
 import { PollEntity } from '../modules/polls/entities/polls.entity';
+import { QuestionOptionEntity } from '../modules/question-options/entities/question-options.entity';
+import { QuestionEntity } from '../modules/questions/entities/questions.entity';
 import { UserEntity } from '../modules/users/entities/user.entity';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
@@ -16,7 +18,7 @@ export default new DataSource({
     database: process.env.DB_DATABASE,
     port: Number(process.env.DB_PORT),
     synchronize: false,
-    entities: [UserEntity, PollEntity],
+    entities: [UserEntity, PollEntity, QuestionEntity, QuestionOptionEntity],
     migrations,
     migrationsTableName: process.env.DB_MIGRATIONS_TABLE_NAME,
 });
