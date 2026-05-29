@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { USERS_INJECTION_TOKENS } from './constants/users-injection-tokens';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { IUsersService } from './users.service.interface';
@@ -11,7 +12,8 @@ export class UsersService implements IUsersService {
 
     constructor(
         private readonly logger: Logger,
-        @Inject('IUsersRepository') private readonly userRepository: IUsersRepository,
+        @Inject(USERS_INJECTION_TOKENS.IUSERS_REPOSITORY)
+        private readonly userRepository: IUsersRepository,
     ) {}
 
     async create(createUserDto: CreateUserDto): Promise<UserEntity> {

@@ -9,6 +9,7 @@ export class CreatePollDto {
         required: true,
         type: String,
     })
+    @IsString({ message: "Поле 'title' должно быть строкой" })
     @MaxLength(255, {
         message: "Максимальная длина поля 'title' не может быть больше 255 символов",
     })

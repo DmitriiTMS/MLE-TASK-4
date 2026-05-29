@@ -59,11 +59,12 @@ describe('PollsService', () => {
         title: 'Test Poll',
         description: 'Test Description',
         isActive: true,
+        isPublic: false,
         createdAt: new Date(),
         updatedAt: new Date(),
         createUser: mockUser,
         belongsToUser: jest.fn(),
-        isActiveStatus: jest.fn(),
+        isPublicStatus: jest.fn(),
         update: jest.fn(),
         toResponse: jest.fn().mockReturnValue({
             id: 1,
@@ -85,7 +86,8 @@ describe('PollsService', () => {
     const mockUpdatePollDto: UpdatePollDto = {
         title: 'Updated Poll',
         description: 'Updated Description',
-        isActive: false,
+        isActive: true,
+        isPublic: false,
     };
 
     const mockPaginationDto: PaginationDto = {
@@ -254,7 +256,7 @@ describe('PollsService', () => {
 
         beforeEach(() => {
             jest.spyOn(mockPollEntity, 'belongsToUser').mockReturnValue(true);
-            jest.spyOn(mockPollEntity, 'isActiveStatus').mockReturnValue(true);
+            jest.spyOn(mockPollEntity, 'isPublicStatus').mockReturnValue(true);
         });
 
         it('should return poll from database when cache is empty and user is owner', async () => {
@@ -276,7 +278,7 @@ describe('PollsService', () => {
 
         it('should return poll from database when cache is empty and poll is active', async () => {
             jest.spyOn(mockPollEntity, 'belongsToUser').mockReturnValue(false);
-            jest.spyOn(mockPollEntity, 'isActiveStatus').mockReturnValue(true);
+            jest.spyOn(mockPollEntity, 'isPublicStatus').mockReturnValue(true);
             jest.spyOn(redisService, 'get').mockResolvedValue(null);
             jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
             jest.spyOn(redisService, 'set').mockResolvedValue(undefined);
@@ -311,7 +313,7 @@ describe('PollsService', () => {
 
         it('should throw ForbiddenException when poll is not active and user is not owner', async () => {
             jest.spyOn(mockPollEntity, 'belongsToUser').mockReturnValue(false);
-            jest.spyOn(mockPollEntity, 'isActiveStatus').mockReturnValue(false);
+            jest.spyOn(mockPollEntity, 'isPublicStatus').mockReturnValue(false);
             jest.spyOn(redisService, 'get').mockResolvedValue(null);
             jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
 

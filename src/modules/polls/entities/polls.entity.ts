@@ -4,11 +4,13 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { QuestionEntity } from '../../questions/entities/questions.entity';
 import { UserEntity } from '../../users/entities/user.entity';
-import { PollResponse } from '../constants/types';
+import { PollResponse, PollWithQuestions } from '../constants/types';
 
 @Entity('polls')
 export class PollEntity {
@@ -24,6 +26,9 @@ export class PollEntity {
     @Column({ type: 'boolean', name: 'is_active', default: true })
     isActive: boolean;
 
+    @Column({ type: 'boolean', name: 'is_public', default: false })
+    isPublic: boolean;
+
     @CreateDateColumn({ type: 'timestamptz', name: 'created_at', nullable: false })
     createdAt: Date;
 
@@ -34,12 +39,15 @@ export class PollEntity {
     @JoinColumn({ name: 'create_user_id' })
     createUser: UserEntity;
 
+    @OneToMany(() => QuestionEntity, (question) => question.poll, { cascade: true })
+    questions: QuestionEntity[];
+
     belongsToUser(userId: number): boolean {
         return this.createUser?.id === userId;
     }
 
-    isActiveStatus(): boolean {
-        return this.isActive === true;
+    isPublicStatus(): boolean {
+        return this.isPublic === true;
     }
 
     static createInstance(
@@ -50,12 +58,15 @@ export class PollEntity {
         const poll = new PollEntity();
         poll.title = title;
         poll.description = description;
-        poll.isActive = false;
+        poll.isActive = true;
+        poll.isPublic = false;
         poll.createUser = createUser;
         return poll;
     }
 
-    update(data: Partial<Pick<PollEntity, 'title' | 'description' | 'isActive'>>): void {
+    update(
+        data: Partial<Pick<PollEntity, 'title' | 'description' | 'isActive' | 'isPublic'>>,
+    ): void {
         if (data.title !== undefined) {
             this.title = data.title;
         }
@@ -65,6 +76,9 @@ export class PollEntity {
         if (data.isActive !== undefined) {
             this.isActive = data.isActive;
         }
+        if (data.isPublic !== undefined) {
+            this.isPublic = data.isPublic;
+        }
     }
 
     toResponse() {
@@ -73,6 +87,7 @@ export class PollEntity {
             title: this.title,
             description: this.description,
             isActive: this.isActive,
+            isPublic: this.isPublic,
             createUser: {
                 id: this.createUser.id,
                 name: this.createUser.name,
@@ -84,13 +99,13 @@ export class PollEntity {
         return polls.map((poll) => poll.toResponse());
     }
 
-
     static fromJSON(data: PollResponse): PollEntity {
         const poll = new PollEntity();
         poll.id = data.id;
         poll.title = data.title;
         poll.description = data.description;
         poll.isActive = data.isActive;
+        poll.isPublic = data.isPublic;
 
         const userEntity = new UserEntity();
         userEntity.id = data.createUser.id;
@@ -100,9 +115,33 @@ export class PollEntity {
         return poll;
     }
 
-
     static fromJSONArray(dataArray: PollResponse[]): PollEntity[] {
         if (!Array.isArray(dataArray)) return [];
-        return dataArray.map(data => this.fromJSON(data));
+        return dataArray.map((data) => this.fromJSON(data));
+    }
+
+    static toResponsePollWithQuestions(data: PollEntity): PollWithQuestions {
+        return {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            isActive: data.isActive,
+            isPublic: data.isPublic,
+            questions: data.questions.map((question) => {
+                return {
+                    id: question.id,
+                    text: question.text,
+                    type: question.type,
+                    orderNum: question.orderNum,
+                    questionOptions: question.questionOptions.map((option) => {
+                        return {
+                            id: option.id,
+                            text: option.text,
+                            orderNum: option.orderNum,
+                        };
+                    }),
+                };
+            }),
+        };
     }
 }

@@ -6,9 +6,11 @@ import {
     NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
+import { USERS_INJECTION_TOKENS } from '../users/constants/users-injection-tokens';
 import { IAuthService } from './auth.service.interface';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { AUTH_INJECTION_TOKENS } from './types/constants/auth-injection-tokens';
 import { AUTH_MESSAGE } from './types/constants/types';
 import { IGetMe } from './types/types';
 import { JwtTokenService, Tokens } from './utils/jwt/jwt.service';
@@ -25,9 +27,12 @@ export class AuthService implements IAuthService {
 
     constructor(
         private readonly logger: Logger,
-        @Inject('IPasswordService') private readonly passwordService: IPasswordService,
-        @Inject('IUsersRepository') private readonly userRepository: IUsersRepository,
-        @Inject('IUsersService') private readonly userService: IUsersService,
+        @Inject(AUTH_INJECTION_TOKENS.IPASSWORD_SERVICE)
+        private readonly passwordService: IPasswordService,
+        @Inject(USERS_INJECTION_TOKENS.IUSERS_REPOSITORY)
+        private readonly userRepository: IUsersRepository,
+        @Inject(USERS_INJECTION_TOKENS.IUSERS_SERVICE)
+        private readonly userService: IUsersService,
         private readonly jwtTokenService: JwtTokenService,
     ) {}
 
