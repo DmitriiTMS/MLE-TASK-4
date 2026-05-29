@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { PollEntity } from '../../polls/entities/polls.entity';
-import { IResponseQuestion } from '../constants/types';
+import { ResponseQuestionDto } from '../constants/types';
 import { QuestionOptionEntity } from '../../question-options/entities/question-options.entity';
 
 export type QuestionType = 'single' | 'multiple';
@@ -100,7 +100,7 @@ export class QuestionEntity {
         return updatedQuestion;
     }
 
-    static toResponse(data: QuestionEntity): IResponseQuestion {
+    static toResponse(data: QuestionEntity): ResponseQuestionDto {
         return {
             id: data.id,
             pollId: data.pollId,
