@@ -18,13 +18,18 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/utils/jwt/jwt-auth.guard';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
-import { IDataRequestQuestion, IResponseQuestion } from './constants/types';
+import { DataRequestQuestionDto, ResponseQuestionDto } from './constants/types';
 import { CreateQuestionWithOptionsDto } from './dto/create-question-with-options.dto';
 import { QuestionEntity } from './entities/questions.entity';
 import type { IQuestionsService } from './questions.service.interface';
 import { PollEntity } from '../polls/entities/polls.entity';
 import { PollWithQuestions } from '../polls/constants/types';
 import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
+import { ApiCreateQuestionDocumentation } from './decorators/swagger/create-questions.decorator';
+import { ApiFindPollQuestionsDocumentation } from './decorators/swagger/find-poll-questions-documentation.decorator';
+import { ApiFindQuestionDocumentation } from './decorators/swagger/find-question-documentation.decorator';
+import { ApiUpdateQuestionDocumentation } from './decorators/swagger/update-question-documentation.decorator';
+import { ApiDeleteQuestionDocumentation } from './decorators/swagger/delete-question-documentation.decorator';
 
 @ApiTags('Вопросы')
 @Controller('polls/:pollId/questions')
@@ -41,15 +46,16 @@ export class QuestionsController {
     @Post()
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.CREATED)
+    @ApiCreateQuestionDocumentation()
     async createQuestionWithOptions(
         @CurrentUser() user: { id: number },
         @Param('pollId', ParseIntPipe) pollId: number,
         @Body() createQuestionDto: CreateQuestionWithOptionsDto,
-    ): Promise<IResponseQuestion> {
+    ): Promise<ResponseQuestionDto> {
         const method = 'POST';
         const route = `/polls/${pollId}/questions`;
 
-        const data: IDataRequestQuestion = {
+        const data: DataRequestQuestionDto = {
             userId: user.id,
             pollId,
             createQuestionDto,
@@ -65,6 +71,7 @@ export class QuestionsController {
 
     @Get()
     @HttpCode(HttpStatus.OK)
+    @ApiFindPollQuestionsDocumentation()
     async findPollWithAllQuestions(
         @CurrentUser() user: { id: number },
         @Param('pollId', ParseIntPipe) pollId: number,
@@ -89,11 +96,12 @@ export class QuestionsController {
 
     @Get(':questionId')
     @HttpCode(HttpStatus.OK)
+    @ApiFindQuestionDocumentation()
     async findQuestion(
         @CurrentUser() user: { id: number },
         @Param('pollId', ParseIntPipe) pollId: number,
         @Param('questionId', ParseIntPipe) questionId: number,
-    ): Promise<IResponseQuestion> {
+    ): Promise<ResponseQuestionDto> {
         const method = 'GET';
         const route = `/polls/${pollId}/questions/${questionId}`;
 
@@ -123,13 +131,15 @@ export class QuestionsController {
     }
 
     @Put(':questionId')
+    @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.OK)
+    @ApiUpdateQuestionDocumentation()
     async updateQuestion(
         @CurrentUser() user: { id: number },
         @Param('pollId', ParseIntPipe) pollId: number,
         @Param('questionId', ParseIntPipe) questionId: number,
         @Body() updateData: UpdateQuestionWithOptionsDto,
-    ): Promise<IResponseQuestion> {
+    ): Promise<ResponseQuestionDto> {
         const method = 'PUT';
         const route = `/polls/${pollId}/questions/${questionId}`;
 
@@ -156,6 +166,7 @@ export class QuestionsController {
 
     @Delete(':questionId')
     @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiDeleteQuestionDocumentation()
     async deleteQuestion(
         @CurrentUser() user: { id: number },
         @Param('pollId', ParseIntPipe) pollId: number,

@@ -4,7 +4,6 @@ import {
     ApiBody,
     ApiCreatedResponse,
     ApiUnauthorizedResponse,
-    ApiForbiddenResponse,
     ApiBadRequestResponse,
     ApiNotFoundResponse,
     ApiBearerAuth,
