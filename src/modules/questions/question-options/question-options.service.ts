@@ -61,7 +61,7 @@ export class QuestionOptionsService implements IQuestionOptionsService {
             throw new ForbiddenException(QUESTIONS_MESSAGE.USER_NOT_THE_SURVEY_CREATOR);
         }
 
-        const existingOrderNum = question.questionOptions.some(
+        const existingOrderNum = question.questionOptions?.some(
             (opt) => opt.orderNum === createOptionDto.orderNum,
         );
         if (existingOrderNum) {
