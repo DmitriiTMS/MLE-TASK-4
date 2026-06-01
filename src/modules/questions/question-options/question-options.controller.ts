@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     HttpCode,
     HttpStatus,
     Inject,
@@ -15,11 +16,10 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/utils/jwt/jwt-auth.guard';
 import { OPTIONS_INJECTION_TOKENS } from './constants/option-injection-tokens';
-import { ICreateOptioData, ICreateOptionResponseData } from './constants/types';
+import { ICreateOptioData, ICreateOptionResponseData, IDeleteOptionData } from './constants/types';
+import { QuestionOptionEntity } from './domain/question-options.entity';
 import { CreateOptionDto } from './dto/create-question-option.dto';
 import type { IQuestionOptionsService } from './question-options.service.interface';
-import { QuestionOptionEntity } from './domain/question-options.entity';
-
 
 @ApiTags('Варианты ответов')
 @Controller('question/:questionId/option')
@@ -31,7 +31,7 @@ export class QuestionOptionsController {
         private readonly logger: Logger,
         @Inject(OPTIONS_INJECTION_TOKENS.IOPTIONS_SERVICE)
         private readonly questionOptionsService: IQuestionOptionsService,
-    ) { }
+    ) {}
 
     @Post()
     @UseGuards(ThrottlerGuard)
@@ -52,10 +52,35 @@ export class QuestionOptionsController {
 
         try {
             const option = await this.questionOptionsService.createOption(data);
-            this.logger.log(
-                `[${this.context}] - Option successfully PollId: ${option.id}`,
-            );
-            return QuestionOptionEntity.toResponse(option)
+            this.logger.log(`[${this.context}] - Option successfully PollId: ${option.id}`);
+            return QuestionOptionEntity.toResponse(option);
+        } catch (error) {
+            this.logError(error, method, route);
+            throw error;
+        }
+    }
+
+    @Delete(':optionId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async deleteQuestionOption(
+        @CurrentUser() user: { id: number },
+        @Param('questionId', ParseIntPipe) questionId: number,
+        @Param('optionId', ParseIntPipe) optionId: number,
+    ): Promise<void> {
+        const method = 'DELETE';
+        const route = `question/${questionId}/option/${optionId}`;
+
+        this.logger.log(`[${this.context}] - delete question`);
+
+        const data: IDeleteOptionData = {
+            userId: user.id,
+            questionId,
+            optionId,
+        };
+
+        try {
+            await this.questionOptionsService.deleteOption(data);
+            this.logger.log(`[${this.context}] - option delete successfully optionId: ${optionId}`);
         } catch (error) {
             this.logError(error, method, route);
             throw error;
@@ -68,7 +93,7 @@ export class QuestionOptionsController {
 
         this.logger.error(
             `[${this.context}] - Request failed - Method: ${method}, Route: ${route}, ` +
-            `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
+                `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
         );
 
         if (errorStack && process.env.NODE_ENV !== 'production') {

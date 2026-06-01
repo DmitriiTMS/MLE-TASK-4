@@ -1,10 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { USERS_INJECTION_TOKENS } from './constants/users-injection-tokens';
+import { UserEntity } from './domain/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 // import { UserEntity } from './models/user.model';
 import { IUsersService } from './users.service.interface';
 import type { IUsersRepository } from './users.repository.interface';
-import { UserEntity } from './domain/user.entity';
 
 @Injectable()
 export class UsersService implements IUsersService {

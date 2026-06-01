@@ -25,12 +25,12 @@ import { ApiFindAllPollsDocumentation } from './decorators/swagger/swagger-findA
 import { ApiFindOnePollDocumentation } from './decorators/swagger/swagger-findOne-poll.decorator';
 import { ApiRemovePollDocumentation } from './decorators/swagger/swagger-remove-poll.decorator';
 import { ApiUpdatePollDocumentation } from './decorators/swagger/swagger-update-poll.decorator';
+import { PollEntity } from './domain/polls.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 
 import type { IPollsService } from './polls.service.interface';
-import { PollEntity } from './domain/polls.entity';
 
 @ApiTags('Опросы')
 @Controller('polls')

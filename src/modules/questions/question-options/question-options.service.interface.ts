@@ -1,3 +1,7 @@
+import { ICreateOptioData, IDeleteOptionData } from './constants/types';
+import { QuestionOptionEntity } from './domain/question-options.entity';
+
 export interface IQuestionOptionsService {
-    createOption(data): Promise<any>;
+    createOption(data: ICreateOptioData): Promise<QuestionOptionEntity>;
+    deleteOption(data: IDeleteOptionData): Promise<void>;
 }

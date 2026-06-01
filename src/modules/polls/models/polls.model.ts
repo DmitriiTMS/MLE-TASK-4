@@ -40,5 +40,4 @@ export class PollModel {
 
     @OneToMany(() => QuestionModel, (question) => question.poll, { cascade: true })
     questions: QuestionModel[];
-
 }

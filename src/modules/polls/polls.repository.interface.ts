@@ -1,7 +1,6 @@
 import { PollEntity } from './domain/polls.entity';
 import { PaginationDto } from './dto/pagination-poll.dto';
 
-
 export interface IPollsRepository {
     save(poll: PollEntity): Promise<PollEntity>;
     findAll(

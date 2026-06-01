@@ -7,8 +7,14 @@ export interface ICreateOptioData {
     };
 }
 
+export interface IDeleteOptionData {
+    userId: number;
+    questionId: number;
+    optionId: number;
+}
+
 export interface ICreateOptionResponseData {
-    id: number
-    text: string
-    orderNum: number
+    id: number;
+    text: string;
+    orderNum: number;
 }

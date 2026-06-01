@@ -3,7 +3,6 @@ import { QuestionOptionEntity } from '../question-options/domain/question-option
 
 import { QuestionEntity } from './domain/questions.entity';
 
-
 export interface IQuestionsRepository {
     createQuestion(
         question: QuestionEntity,

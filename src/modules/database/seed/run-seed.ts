@@ -1,14 +1,14 @@
 import * as argon2 from 'argon2';
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
+import { PollEntity } from '../../polls/domain/polls.entity';
 import { PollModel } from '../../polls/models/polls.model';
+import { QuestionOptionEntity } from '../../questions/question-options/domain/question-options.entity';
 import { QuestionOptionModel } from '../../questions/question-options/models/question-options.model';
+import { QuestionEntity } from '../../questions/questions-variant/domain/questions.entity';
+import { QuestionModel } from '../../questions/questions-variant/models/questions.model';
 import { UserEntity } from '../../users/domain/user.entity';
 import { UserModel } from '../../users/models/user.model';
-import { PollEntity } from '../../polls/domain/polls.entity';
-import { QuestionModel } from '../../questions/questions-variant/models/questions.model';
-import { QuestionEntity } from '../../questions/questions-variant/domain/questions.entity';
-import { QuestionOptionEntity } from '../../questions/question-options/domain/question-options.entity';
 // yarn seed
 
 dotenv.config();

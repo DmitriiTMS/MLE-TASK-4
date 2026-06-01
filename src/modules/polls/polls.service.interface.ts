@@ -3,7 +3,6 @@ import { CreatePollDto } from './dto/create-poll.dto';
 import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 
-
 export interface IPollsService {
     create(userId: number, data: CreatePollDto): Promise<PollEntity>;
     findAll(

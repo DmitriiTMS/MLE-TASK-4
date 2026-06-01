@@ -33,5 +33,4 @@ export class UserModel {
     @Exclude()
     @OneToMany(() => PollModel, (poll) => poll.createUser)
     polls: PollModel[];
-
 }

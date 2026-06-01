@@ -1,17 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PollEntity } from './domain/polls.entity';
 import { PaginationDto } from './dto/pagination-poll.dto';
 import { PollModel } from './models/polls.model';
 import { IPollsRepository } from './polls.repository.interface';
-import { PollEntity } from './domain/polls.entity';
 
 @Injectable()
 export class PollsRepository implements IPollsRepository {
     constructor(
         @InjectRepository(PollModel)
         private readonly pollRepository: Repository<PollModel>,
-    ) { }
+    ) {}
 
     async save(poll: PollEntity): Promise<PollEntity> {
         const savedPoll = await this.pollRepository.save(poll);
@@ -44,7 +44,10 @@ export class PollsRepository implements IPollsRepository {
         return PollEntity.toEntity(fullPoll);
     }
 
-    async findAll(userId: number, paginationDto: PaginationDto): Promise<{
+    async findAll(
+        userId: number,
+        paginationDto: PaginationDto,
+    ): Promise<{
         data: PollEntity[];
         meta: {
             page: number;
@@ -115,7 +118,7 @@ export class PollsRepository implements IPollsRepository {
         });
 
         if (!poll) {
-            return null
+            return null;
         }
 
         return PollEntity.toEntity(poll);

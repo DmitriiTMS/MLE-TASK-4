@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { QuestionOptionEntity } from './domain/question-options.entity';
 import { QuestionOptionModel } from './models/question-options.model';
 import { IQuestionOptionsRepository } from './question-options.repository.interface';
-import { QuestionOptionEntity } from './domain/question-options.entity';
 
 @Injectable()
 export class QuestionOptionsRepository implements IQuestionOptionsRepository {
@@ -12,8 +12,8 @@ export class QuestionOptionsRepository implements IQuestionOptionsRepository {
     constructor(
         private readonly logger: Logger,
         @InjectRepository(QuestionOptionModel)
-        private readonly questionOptionEntity: Repository<QuestionOptionModel>,
-    ) { }
+        private readonly questionOptionRepository: Repository<QuestionOptionModel>,
+    ) {}
 
     async createOption(questionOption: {
         questionId: number;
@@ -21,7 +21,7 @@ export class QuestionOptionsRepository implements IQuestionOptionsRepository {
         orderNum: number;
     }): Promise<QuestionOptionEntity> {
         try {
-            const savedOption = await this.questionOptionEntity.save(questionOption);
+            const savedOption = await this.questionOptionRepository.save(questionOption);
             return QuestionOptionEntity.toEntity(savedOption);
         } catch (error: unknown) {
             this.logger.error(`${this.context} - failed createOption: ${error}`);
@@ -29,4 +29,17 @@ export class QuestionOptionsRepository implements IQuestionOptionsRepository {
         }
     }
 
+    async findOptionById(optionId: number): Promise<QuestionOptionEntity | null> {
+        const option = await this.questionOptionRepository.findOne({
+            where: { id: optionId },
+        });
+        if (!option) {
+            return null;
+        }
+        return QuestionOptionEntity.toEntity(option);
+    }
+
+    async deleteOption(optionId: number): Promise<void> {
+        await this.questionOptionRepository.delete(optionId);
+    }
 }

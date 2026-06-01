@@ -4,6 +4,7 @@ import { PollModel } from '../polls/models/polls.model';
 import { PollsModule } from '../polls/polls.module';
 import { OPTIONS_INJECTION_TOKENS } from './question-options/constants/option-injection-tokens';
 
+import { QuestionOptionModel } from './question-options/models/question-options.model';
 import { QuestionOptionsController } from './question-options/question-options.controller';
 import { QuestionOptionsRepository } from './question-options/question-options.repository';
 import { QuestionOptionsService } from './question-options/question-options.service';
@@ -12,7 +13,6 @@ import { QuestionModel } from './questions-variant/models/questions.model';
 import { QuestionsController } from './questions-variant/questions.controller';
 import { QuestionsRepository } from './questions-variant/questions.repository';
 import { QuestionsService } from './questions-variant/questions.service';
-import { QuestionOptionModel } from './question-options/models/question-options.model';
 
 @Module({
     imports: [

@@ -8,8 +8,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { QuestionOptionModel } from '../../question-options/models/question-options.model';
 import { PollModel } from '../../../polls/models/polls.model';
+import { QuestionOptionModel } from '../../question-options/models/question-options.model';
 
 export type QuestionType = 'single' | 'multiple';
 
@@ -42,5 +42,4 @@ export class QuestionModel {
 
     @OneToMany(() => QuestionOptionModel, (option) => option.question, { cascade: true })
     questionOptions: QuestionOptionModel[];
-
 }

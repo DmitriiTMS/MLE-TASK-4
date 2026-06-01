@@ -14,8 +14,6 @@ import {
 import { CreateOptionDto } from '../../question-options/dto/create-question-option.dto';
 import { QuestionType } from '../constants/question-type.enum';
 
-
-
 export class CreateQuestionWithOptionsDto {
     @ApiProperty({
         description: 'Текст вопроса',

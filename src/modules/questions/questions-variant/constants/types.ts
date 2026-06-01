@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateQuestionWithOptionsDto } from '../dto/create-question-with-options.dto';
 
-
 export class DataRequestQuestionDto {
     @ApiProperty({
         description: 'ID пользователя',

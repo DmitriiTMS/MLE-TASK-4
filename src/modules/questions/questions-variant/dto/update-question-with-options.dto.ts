@@ -13,7 +13,6 @@ import {
 } from 'class-validator';
 import { QuestionType } from '../constants/question-type.enum';
 
-
 class UpdateOptionDto {
     @ApiPropertyOptional({
         description: 'Текст варианта ответа',

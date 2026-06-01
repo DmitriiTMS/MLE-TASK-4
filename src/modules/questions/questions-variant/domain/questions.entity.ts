@@ -1,13 +1,11 @@
-
-import { ResponseQuestionDto } from '../constants/types';
 import { PollModel } from '../../../polls/models/polls.model';
-import { QuestionModel } from '../models/questions.model';
 import { QuestionOptionEntity } from '../../question-options/domain/question-options.entity';
+import { ResponseQuestionDto } from '../constants/types';
+import { QuestionModel } from '../models/questions.model';
 
 export type QuestionType = 'single' | 'multiple';
 
 export class QuestionEntity {
-
     id: number;
     pollId: number;
     text: string;

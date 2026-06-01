@@ -1,13 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { PollModel } from '../../polls/models/polls.model';
-import { QuestionOptionModel } from '../question-options/models/question-options.model';
-import { IQuestionsRepository } from './questions.repository.interface';
 import { PollEntity } from '../../polls/domain/polls.entity';
-import { QuestionModel } from './models/questions.model';
-import { QuestionEntity } from './domain/questions.entity';
+import { PollModel } from '../../polls/models/polls.model';
 import { QuestionOptionEntity } from '../question-options/domain/question-options.entity';
+import { QuestionOptionModel } from '../question-options/models/question-options.model';
+import { QuestionEntity } from './domain/questions.entity';
+import { QuestionModel } from './models/questions.model';
+import { IQuestionsRepository } from './questions.repository.interface';
 
 @Injectable()
 export class QuestionsRepository implements IQuestionsRepository {
@@ -20,7 +20,7 @@ export class QuestionsRepository implements IQuestionsRepository {
         @InjectRepository(PollModel)
         private readonly pollRepository: Repository<PollModel>,
         private readonly dataSource: DataSource,
-    ) { }
+    ) {}
 
     async createQuestion(
         question: QuestionEntity,
@@ -78,10 +78,10 @@ export class QuestionsRepository implements IQuestionsRepository {
         });
 
         if (!poll) {
-            return null
+            return null;
         }
 
-        return PollEntity.toEntityPollWithQuestions(poll)
+        return PollEntity.toEntityPollWithQuestions(poll);
     }
 
     async findQuestion(pollId: number, questionId: number): Promise<QuestionEntity | null> {
@@ -96,7 +96,7 @@ export class QuestionsRepository implements IQuestionsRepository {
                 },
             },
         });
-        return question ? QuestionEntity.toEntity(question) : null
+        return question ? QuestionEntity.toEntity(question) : null;
     }
 
     async updateQuestionWithOptions(question: QuestionEntity): Promise<QuestionEntity> {
@@ -168,6 +168,6 @@ export class QuestionsRepository implements IQuestionsRepository {
             where: { id: questionId },
         });
 
-        return question ? QuestionEntity.toEntity(question) : null
+        return question ? QuestionEntity.toEntity(question) : null;
     }
 }

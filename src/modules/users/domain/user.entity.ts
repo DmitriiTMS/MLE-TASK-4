@@ -1,5 +1,5 @@
-import { PollEntity } from "../../polls/domain/polls.entity";
-import { UserModel } from "../models/user.model";
+import { PollEntity } from '../../polls/domain/polls.entity';
+import { UserModel } from '../models/user.model';
 
 export class UserEntity {
     id: number;
@@ -24,7 +24,6 @@ export class UserEntity {
         user.email = data.email;
         user.name = data.name;
         user.passwordHash = data.passwordHash;
-        return user
+        return user;
     }
-
 }

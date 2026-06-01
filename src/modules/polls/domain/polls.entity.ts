@@ -1,4 +1,3 @@
-
 import { QuestionOptionEntity } from '../../questions/question-options/domain/question-options.entity';
 import { QuestionEntity } from '../../questions/questions-variant/domain/questions.entity';
 import { UserEntity } from '../../users/domain/user.entity';
@@ -7,7 +6,6 @@ import { PollResponse, PollWithQuestions } from '../constants/types';
 import { PollModel } from '../models/polls.model';
 
 export class PollEntity {
-
     id: number;
     title: string;
     description?: string;
@@ -169,7 +167,7 @@ export class PollEntity {
                 optionEntity.orderNum = option.orderNum;
                 optionEntity.questionId = option.questionId;
                 return optionEntity;
-            })
+            });
             return question;
         });
 

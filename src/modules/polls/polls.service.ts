@@ -5,13 +5,13 @@ import { POLL_INJECTION_TOKENS } from './constants/poll-injection-tokens';
 import { PaginatedResponse, PollResponse } from './constants/types';
 import { KEYS_POLL } from './constants/types-redis';
 import { POLLS_MESSAGE } from './constants/types.message';
+import { PollEntity } from './domain/polls.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { IPollsService } from './polls.service.interface';
 import type { IPollsRepository } from './polls.repository.interface';
 import type { IUsersRepository } from '../users/users.repository.interface';
-import { PollEntity } from './domain/polls.entity';
 
 @Injectable()
 export class PollsService implements IPollsService {

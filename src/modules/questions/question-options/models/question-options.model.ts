@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { QuestionModel } from '../../questions-variant/models/questions.model';
 
-
 @Entity('question_options')
 export class QuestionOptionModel {
     @PrimaryGeneratedColumn()
@@ -21,5 +20,4 @@ export class QuestionOptionModel {
     })
     @JoinColumn({ name: 'question_id' })
     question: QuestionModel;
-
 }
