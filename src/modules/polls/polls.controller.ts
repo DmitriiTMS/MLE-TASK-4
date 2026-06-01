@@ -28,8 +28,9 @@ import { ApiUpdatePollDocumentation } from './decorators/swagger/swagger-update-
 import { CreatePollDto } from './dto/create-poll.dto';
 import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
-import { PollEntity } from './entities/polls.entity';
+
 import type { IPollsService } from './polls.service.interface';
+import { PollEntity } from './domain/polls.entity';
 
 @ApiTags('Опросы')
 @Controller('polls')

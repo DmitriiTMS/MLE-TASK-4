@@ -1,16 +1,17 @@
 import { ForbiddenException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { POLL_INJECTION_TOKENS } from '../../polls/constants/poll-injection-tokens';
 import { POLLS_MESSAGE } from '../../polls/constants/types.message';
-import { PollEntity } from '../../polls/entities/polls.entity';
-import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
 import { DataRequestQuestionDto } from './constants/types';
 import { QUESTIONS_MESSAGE } from './constants/types.messages';
 import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
-import { QuestionEntity } from './entities/questions.entity';
+
 import type { IQuestionsRepository } from './questions.repository.interface';
 import type { IQuestionsService } from './questions.service.interface';
 import type { IPollsRepository } from '../../polls/polls.repository.interface';
+import { PollEntity } from '../../polls/domain/polls.entity';
+import { QuestionEntity } from './domain/questions.entity';
+import { QuestionOptionEntity } from '../question-options/domain/question-options.entity';
 
 @Injectable()
 export class QuestionsService implements IQuestionsService {

@@ -1,47 +1,21 @@
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
-} from 'typeorm';
-import { PollEntity } from '../../../polls/entities/polls.entity';
-import { QuestionOptionEntity } from '../../question-options/entities/question-options.entity';
+
 import { ResponseQuestionDto } from '../constants/types';
+import { PollModel } from '../../../polls/models/polls.model';
+import { QuestionModel } from '../models/questions.model';
+import { QuestionOptionEntity } from '../../question-options/domain/question-options.entity';
 
 export type QuestionType = 'single' | 'multiple';
 
-@Entity('questions')
 export class QuestionEntity {
-    @PrimaryGeneratedColumn()
+
     id: number;
-
-    @Column({ type: 'int', name: 'poll_id', nullable: false })
     pollId: number;
-
-    @Column({ type: 'text', nullable: false })
     text: string;
-
-    @Column({ type: 'varchar', length: 20, nullable: false })
     type: QuestionType;
-
-    @Column({ type: 'int', name: 'order_num', nullable: false })
     orderNum: number;
-
-    @CreateDateColumn({ type: 'timestamptz', name: 'created_at', nullable: false })
     createdAt: Date;
-
-    @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at', nullable: false })
     updatedAt: Date;
-
-    @ManyToOne(() => PollEntity, (poll) => poll.questions, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'poll_id' })
-    poll: PollEntity;
-
-    @OneToMany(() => QuestionOptionEntity, (option) => option.question, { cascade: true })
+    poll: PollModel;
     questionOptions: QuestionOptionEntity[];
 
     static createInstance(
@@ -113,5 +87,27 @@ export class QuestionEntity {
                 };
             }),
         };
+    }
+
+    static toEntity(data: QuestionModel): QuestionEntity {
+        const entity = new QuestionEntity();
+        entity.id = data.id;
+        entity.pollId = data.pollId;
+        entity.text = data.text;
+        entity.type = data.type;
+        entity.orderNum = data.orderNum;
+        entity.createdAt = data.createdAt;
+        entity.updatedAt = data.updatedAt;
+
+        entity.questionOptions = data.questionOptions?.map((option) => {
+            const optionEntity = new QuestionOptionEntity();
+            optionEntity.id = option.id;
+            optionEntity.text = option.text;
+            optionEntity.orderNum = option.orderNum;
+            optionEntity.questionId = option.questionId;
+            return optionEntity;
+        });
+
+        return entity;
     }
 }

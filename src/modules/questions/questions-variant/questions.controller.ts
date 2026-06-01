@@ -18,7 +18,6 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/utils/jwt/jwt-auth.guard';
 import { PollWithQuestions } from '../../polls/constants/types';
-import { PollEntity } from '../../polls/entities/polls.entity';
 import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
 import { DataRequestQuestionDto, ResponseQuestionDto } from './constants/types';
 import { ApiCreateQuestionDocumentation } from './decorators/swagger/create-questions.decorator';
@@ -28,8 +27,9 @@ import { ApiFindQuestionDocumentation } from './decorators/swagger/find-question
 import { ApiUpdateQuestionDocumentation } from './decorators/swagger/update-question-documentation.decorator';
 import { CreateQuestionWithOptionsDto } from './dto/create-question-with-options.dto';
 import { UpdateQuestionWithOptionsDto } from './dto/update-question-with-options.dto';
-import { QuestionEntity } from './entities/questions.entity';
 import type { IQuestionsService } from './questions.service.interface';
+import { PollEntity } from '../../polls/domain/polls.entity';
+import { QuestionEntity } from './domain/questions.entity';
 
 @ApiTags('Вопросы')
 @Controller('polls/:pollId/questions')

@@ -1,10 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { PollEntity } from '../../polls/entities/polls.entity';
-import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
-import { QuestionEntity } from './entities/questions.entity';
+import { PollModel } from '../../polls/models/polls.model';
+import { QuestionOptionModel } from '../question-options/models/question-options.model';
 import { IQuestionsRepository } from './questions.repository.interface';
+import { PollEntity } from '../../polls/domain/polls.entity';
+import { QuestionModel } from './models/questions.model';
+import { QuestionEntity } from './domain/questions.entity';
+import { QuestionOptionEntity } from '../question-options/domain/question-options.entity';
 
 @Injectable()
 export class QuestionsRepository implements IQuestionsRepository {
@@ -12,12 +15,12 @@ export class QuestionsRepository implements IQuestionsRepository {
 
     constructor(
         private readonly logger: Logger,
-        @InjectRepository(QuestionEntity)
-        private readonly questionRepository: Repository<QuestionEntity>,
-        @InjectRepository(PollEntity)
-        private readonly pollRepository: Repository<PollEntity>,
+        @InjectRepository(QuestionModel)
+        private readonly questionRepository: Repository<QuestionModel>,
+        @InjectRepository(PollModel)
+        private readonly pollRepository: Repository<PollModel>,
         private readonly dataSource: DataSource,
-    ) {}
+    ) { }
 
     async createQuestion(
         question: QuestionEntity,
@@ -26,12 +29,12 @@ export class QuestionsRepository implements IQuestionsRepository {
         try {
             return await this.dataSource.transaction(async (transactionalEntityManager) => {
                 const savedQuestion = await transactionalEntityManager.save(
-                    QuestionEntity,
+                    QuestionModel,
                     question,
                 );
 
                 const savedOptions = await transactionalEntityManager.save(
-                    QuestionOptionEntity,
+                    QuestionOptionModel,
                     questionOptions.map((option) => {
                         option.questionId = savedQuestion.id;
                         return option;
@@ -57,7 +60,7 @@ export class QuestionsRepository implements IQuestionsRepository {
             whereCondition.isPublic = true;
         }
 
-        return await this.pollRepository.findOne({
+        const poll = await this.pollRepository.findOne({
             where: whereCondition,
             relations: {
                 questions: {
@@ -73,10 +76,16 @@ export class QuestionsRepository implements IQuestionsRepository {
                 },
             },
         });
+
+        if (!poll) {
+            return null
+        }
+
+        return PollEntity.toEntityPollWithQuestions(poll)
     }
 
     async findQuestion(pollId: number, questionId: number): Promise<QuestionEntity | null> {
-        return await this.questionRepository.findOne({
+        const question = await this.questionRepository.findOne({
             where: { id: questionId, pollId },
             relations: {
                 questionOptions: true,
@@ -87,6 +96,7 @@ export class QuestionsRepository implements IQuestionsRepository {
                 },
             },
         });
+        return question ? QuestionEntity.toEntity(question) : null
     }
 
     async updateQuestionWithOptions(question: QuestionEntity): Promise<QuestionEntity> {
@@ -99,7 +109,7 @@ export class QuestionsRepository implements IQuestionsRepository {
 
             await this.dataSource.transaction(async (transactionalEntityManager) => {
                 await transactionalEntityManager.update(
-                    QuestionEntity,
+                    QuestionModel,
                     { id: question.id, pollId: question.pollId },
                     {
                         text: question.text,
@@ -112,7 +122,7 @@ export class QuestionsRepository implements IQuestionsRepository {
                     for (const option of question.questionOptions) {
                         if (option.id) {
                             await transactionalEntityManager.update(
-                                QuestionOptionEntity,
+                                QuestionOptionModel,
                                 {
                                     id: option.id,
                                     questionId: question.id,
@@ -139,7 +149,7 @@ export class QuestionsRepository implements IQuestionsRepository {
                 `${this.context} - Question with options saved successfully: ${question.id}`,
             );
 
-            return updatedQuestion;
+            return QuestionEntity.toEntity(updatedQuestion);
         } catch (error: unknown) {
             this.logger.error(`${this.context} - transaction failed: ${error}`);
             throw error;
@@ -154,8 +164,10 @@ export class QuestionsRepository implements IQuestionsRepository {
     }
 
     async findOneQuestion(questionId: number): Promise<QuestionEntity | null> {
-        return await this.questionRepository.findOne({
+        const question = await this.questionRepository.findOne({
             where: { id: questionId },
         });
+
+        return question ? QuestionEntity.toEntity(question) : null
     }
 }

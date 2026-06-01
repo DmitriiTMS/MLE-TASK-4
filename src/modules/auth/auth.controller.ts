@@ -34,10 +34,10 @@ export class AuthController {
     private readonly context = AuthController.name;
     private readonly methodPost = 'POST';
     private readonly methodGet = 'GET';
-    private readonly routeRegister = '/auth/register';
-    private readonly routeLogin = '/auth/login';
-    private readonly routeMe = '/auth/get-me';
-    private readonly routeRefresh = '/auth/refresh';
+    private readonly routeRegister = 'api/auth/register';
+    private readonly routeLogin = 'api/auth/login';
+    private readonly routeMe = 'api/auth/get-me';
+    private readonly routeRefresh = 'api/auth/refresh';
 
     constructor(
         private readonly logger: Logger,

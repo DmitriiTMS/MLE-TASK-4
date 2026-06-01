@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/user.entity';
 import { IUsersRepository } from './users.repository.interface';
 import { UsersService } from './users.service';
+import { UserEntity } from './domain/user.entity';
 
 // yarn test -- src/modules/users/users.service.spec.ts
 

@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { POLL_INJECTION_TOKENS } from '../../polls/constants/poll-injection-tokens';
 import { POLLS_MESSAGE } from '../../polls/constants/types.message';
-import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
+
 import { QUESTIONS_INJECTION_TOKENS } from '../questions-variant/constants/questions-injection-tokens';
 import { QUESTIONS_MESSAGE } from '../questions-variant/constants/types.messages';
 import { OPTIONS_INJECTION_TOKENS } from './constants/option-injection-tokens';
@@ -18,6 +18,7 @@ import { IQuestionOptionsService } from './question-options.service.interface';
 import type { IQuestionOptionsRepository } from './question-options.repository.interface';
 import type { IPollsRepository } from '../../polls/polls.repository.interface';
 import type { IQuestionsRepository } from '../questions-variant/questions.repository.interface';
+import { QuestionOptionEntity } from './domain/question-options.entity';
 
 @Injectable()
 export class QuestionOptionsService implements IQuestionOptionsService {
@@ -60,8 +61,7 @@ export class QuestionOptionsService implements IQuestionOptionsService {
             throw new ForbiddenException(QUESTIONS_MESSAGE.USER_NOT_THE_SURVEY_CREATOR);
         }
 
-        const options = await this.questionOptionsRepository.findMany(questionId);
-        const existingOrderNum = options.some(opt => opt.orderNum === createOptionDto.orderNum);
+        const existingOrderNum = question.questionOptions.some(opt => opt.orderNum === createOptionDto.orderNum);
         if (existingOrderNum) {
             throw new BadRequestException(OPTIONS_MESSAGE.OPTION_ORDER_NUMBER);
         }

@@ -7,10 +7,10 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { PollEntity } from '../../polls/entities/polls.entity';
+import { PollModel } from '../../polls/models/polls.model';
 
 @Entity('users')
-export class UserEntity {
+export class UserModel {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -31,14 +31,7 @@ export class UserEntity {
     updatedAt: Date;
 
     @Exclude()
-    @OneToMany(() => PollEntity, (poll) => poll.createUser)
-    polls: PollEntity[];
+    @OneToMany(() => PollModel, (poll) => poll.createUser)
+    polls: PollModel[];
 
-    static createInstance(name: string, email: string, passwordHash: string): UserEntity {
-        const user = new UserEntity();
-        user.name = name;
-        user.email = email;
-        user.passwordHash = passwordHash;
-        return user;
-    }
 }

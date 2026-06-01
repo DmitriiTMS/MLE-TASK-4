@@ -1,9 +1,8 @@
-import { DeepPartial } from 'typeorm';
-import { PaginatedResponse } from './constants/types';
+import { PollEntity } from './domain/polls.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
-import { PollEntity } from './entities/polls.entity';
+
 
 export interface IPollsService {
     create(userId: number, data: CreatePollDto): Promise<PollEntity>;

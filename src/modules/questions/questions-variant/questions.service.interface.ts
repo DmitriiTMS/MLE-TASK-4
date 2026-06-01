@@ -1,6 +1,8 @@
-import { PollEntity } from '../../polls/entities/polls.entity';
+
+import { PollEntity } from '../../polls/domain/polls.entity';
 import { DataRequestQuestionDto } from './constants/types';
-import { QuestionEntity, QuestionType } from './entities/questions.entity';
+import { QuestionEntity } from './domain/questions.entity';
+import {  QuestionType } from './models/questions.model';
 
 export interface IQuestionsService {
     createQuestionWithOptions(data: DataRequestQuestionDto): Promise<QuestionEntity>;

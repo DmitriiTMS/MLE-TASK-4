@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginationDto } from './dto/pagination-poll.dto';
-import { PollEntity } from './entities/polls.entity';
+import { PollModel } from './models/polls.model';
 import { IPollsRepository } from './polls.repository.interface';
+import { PollEntity } from './domain/polls.entity';
 
 @Injectable()
 export class PollsRepository implements IPollsRepository {
     constructor(
-        @InjectRepository(PollEntity)
-        private readonly pollRepository: Repository<PollEntity>,
-    ) {}
+        @InjectRepository(PollModel)
+        private readonly pollRepository: Repository<PollModel>,
+    ) { }
 
     async save(poll: PollEntity): Promise<PollEntity> {
         const savedPoll = await this.pollRepository.save(poll);
@@ -40,10 +41,18 @@ export class PollsRepository implements IPollsRepository {
             throw new Error('Poll not found after save');
         }
 
-        return fullPoll;
+        return PollEntity.toEntity(fullPoll);
     }
 
-    async findAll(userId: number, paginationDto: PaginationDto) {
+    async findAll(userId: number, paginationDto: PaginationDto): Promise<{
+        data: PollEntity[];
+        meta: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
+    }> {
         const { page, limit } = paginationDto;
         const skip = (page - 1) * limit;
 
@@ -73,7 +82,7 @@ export class PollsRepository implements IPollsRepository {
         const [polls, total] = await queryBuilder.getManyAndCount();
 
         return {
-            data: polls,
+            data: polls.map((poll) => PollEntity.toEntity(poll)),
             meta: {
                 page,
                 limit,
@@ -105,7 +114,11 @@ export class PollsRepository implements IPollsRepository {
             },
         });
 
-        return poll;
+        if (!poll) {
+            return null
+        }
+
+        return PollEntity.toEntity(poll);
     }
 
     async remove(id: number) {

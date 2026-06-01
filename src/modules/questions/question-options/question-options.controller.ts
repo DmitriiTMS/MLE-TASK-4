@@ -18,7 +18,8 @@ import { OPTIONS_INJECTION_TOKENS } from './constants/option-injection-tokens';
 import { ICreateOptioData, ICreateOptionResponseData } from './constants/types';
 import { CreateOptionDto } from './dto/create-question-option.dto';
 import type { IQuestionOptionsService } from './question-options.service.interface';
-import { QuestionOptionEntity } from './entities/question-options.entity';
+import { QuestionOptionEntity } from './domain/question-options.entity';
+
 
 @ApiTags('Варианты ответов')
 @Controller('question/:questionId/option')

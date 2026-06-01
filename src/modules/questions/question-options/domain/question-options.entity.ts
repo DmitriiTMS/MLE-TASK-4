@@ -1,25 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { QuestionEntity } from '../../questions-variant/entities/questions.entity';
 import { ICreateOptionResponseData } from '../constants/types';
+import { QuestionEntity } from '../../questions-variant/domain/questions.entity';
+import { QuestionOptionModel } from '../models/question-options.model';
 
-@Entity('question_options')
 export class QuestionOptionEntity {
-    @PrimaryGeneratedColumn()
+
     id: number;
-
-    @Column({ type: 'int', name: 'question_id', nullable: false })
     questionId: number;
-
-    @Column({ type: 'varchar', length: 255, nullable: false })
     text: string;
-
-    @Column({ type: 'int', name: 'order_num', nullable: false })
     orderNum: number;
-
-    @ManyToOne(() => QuestionEntity, (question) => question.questionOptions, {
-        onDelete: 'CASCADE',
-    })
-    @JoinColumn({ name: 'question_id' })
     question: QuestionEntity;
 
     static createInstance(
@@ -40,5 +28,14 @@ export class QuestionOptionEntity {
             text: data.text,
             orderNum: data.orderNum,
         };
+    }
+
+    static toEntity(data: QuestionOptionModel): QuestionOptionEntity {
+        const questionOption = new QuestionOptionEntity;
+        questionOption.id = data.id;
+        questionOption.questionId = data.questionId;
+        questionOption.text = data.text;
+        questionOption.orderNum = data.orderNum;
+        return questionOption
     }
 }

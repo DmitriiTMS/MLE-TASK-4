@@ -1,45 +1,21 @@
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
-} from 'typeorm';
-import { QuestionEntity } from '../../questions/questions-variant/entities/questions.entity';
-import { UserEntity } from '../../users/entities/user.entity';
+
+import { QuestionOptionEntity } from '../../questions/question-options/domain/question-options.entity';
+import { QuestionEntity } from '../../questions/questions-variant/domain/questions.entity';
+import { UserEntity } from '../../users/domain/user.entity';
+import { UserModel } from '../../users/models/user.model';
 import { PollResponse, PollWithQuestions } from '../constants/types';
+import { PollModel } from '../models/polls.model';
 
-@Entity('polls')
 export class PollEntity {
-    @PrimaryGeneratedColumn()
+
     id: number;
-
-    @Column({ type: 'varchar', length: 255, nullable: false })
     title: string;
-
-    @Column({ type: 'varchar', length: 3000, nullable: true })
     description?: string;
-
-    @Column({ type: 'boolean', name: 'is_active', default: true })
     isActive: boolean;
-
-    @Column({ type: 'boolean', name: 'is_public', default: false })
     isPublic: boolean;
-
-    @CreateDateColumn({ type: 'timestamptz', name: 'created_at', nullable: false })
     createdAt: Date;
-
-    @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at', nullable: false })
     updatedAt: Date;
-
-    @ManyToOne(() => UserEntity, (user) => user.polls, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'create_user_id' })
     createUser: UserEntity;
-
-    @OneToMany(() => QuestionEntity, (question) => question.poll, { cascade: true })
     questions: QuestionEntity[];
 
     belongsToUser(userId: number): boolean {
@@ -143,5 +119,60 @@ export class PollEntity {
                 };
             }),
         };
+    }
+
+    static toEntity(data: PollModel): PollEntity {
+        const poll = new PollEntity();
+        poll.id = data.id;
+        poll.title = data.title;
+        poll.description = data.description;
+        poll.isActive = data.isActive;
+        poll.isPublic = data.isPublic;
+        poll.createdAt = data.createdAt;
+        poll.updatedAt = data.updatedAt;
+
+        const userEntity = new UserEntity();
+        userEntity.id = data.createUser.id;
+        userEntity.name = data.createUser.name;
+        userEntity.email = data.createUser.email;
+        userEntity.createdAt = data.createUser.createdAt;
+        userEntity.updatedAt = data.createUser.updatedAt;
+
+        poll.createUser = userEntity;
+
+        return poll;
+    }
+
+    static toEntityPollWithQuestions(data: PollModel): PollEntity {
+        const poll = new PollEntity();
+        poll.id = data.id;
+        poll.title = data.title;
+        poll.description = data.description;
+        poll.isActive = data.isActive;
+        poll.isPublic = data.isPublic;
+        poll.createdAt = data.createdAt;
+        poll.updatedAt = data.updatedAt;
+
+        poll.questions = data.questions.map((quest) => {
+            const question = new QuestionEntity();
+            question.id = quest.id;
+            question.pollId = quest.pollId;
+            question.text = quest.text;
+            question.type = quest.type;
+            question.orderNum = quest.orderNum;
+            question.createdAt = quest.createdAt;
+            question.updatedAt = quest.updatedAt;
+            question.questionOptions = quest.questionOptions.map((option) => {
+                const optionEntity = new QuestionOptionEntity();
+                optionEntity.id = option.id;
+                optionEntity.text = option.text;
+                optionEntity.orderNum = option.orderNum;
+                optionEntity.questionId = option.questionId;
+                return optionEntity;
+            })
+            return question;
+        });
+
+        return poll;
     }
 }

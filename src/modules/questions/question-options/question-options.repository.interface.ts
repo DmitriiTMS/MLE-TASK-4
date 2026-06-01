@@ -1,4 +1,5 @@
-import { QuestionOptionEntity } from './entities/question-options.entity';
+import { QuestionOptionEntity } from "./domain/question-options.entity";
+
 
 export interface IQuestionOptionsRepository {
     createOption(questionOption: {
@@ -6,5 +7,4 @@ export interface IQuestionOptionsRepository {
         text: string;
         orderNum: number;
     }): Promise<QuestionOptionEntity>;
-    findMany(questionId: number): Promise<QuestionOptionEntity[]>;
 }

@@ -1,11 +1,14 @@
 import * as argon2 from 'argon2';
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
-import { PollEntity } from '../../polls/entities/polls.entity';
-import { QuestionOptionEntity } from '../../questions/question-options/entities/question-options.entity';
-import { QuestionEntity } from '../../questions/questions-variant/entities/questions.entity';
-import { UserEntity } from '../../users/entities/user.entity';
-
+import { PollModel } from '../../polls/models/polls.model';
+import { QuestionOptionModel } from '../../questions/question-options/models/question-options.model';
+import { UserEntity } from '../../users/domain/user.entity';
+import { UserModel } from '../../users/models/user.model';
+import { PollEntity } from '../../polls/domain/polls.entity';
+import { QuestionModel } from '../../questions/questions-variant/models/questions.model';
+import { QuestionEntity } from '../../questions/questions-variant/domain/questions.entity';
+import { QuestionOptionEntity } from '../../questions/question-options/domain/question-options.entity';
 // yarn seed
 
 dotenv.config();
@@ -20,16 +23,16 @@ async function seed() {
         username: process.env.DB_USERNAME || 'postgres',
         password: process.env.DB_PASSWORD || 'pass',
         database: process.env.DB_DATABASE || 'voting_system_dev',
-        entities: [UserEntity, PollEntity, QuestionEntity, QuestionOptionEntity],
+        entities: [UserModel, PollModel, QuestionModel, QuestionOptionModel],
         synchronize: false,
     });
 
     await dataSource.initialize();
 
-    const userRepository = dataSource.getRepository(UserEntity);
-    const pollRepository = dataSource.getRepository(PollEntity);
-    const questionRepository = dataSource.getRepository(QuestionEntity);
-    const questionOptionRepository = dataSource.getRepository(QuestionOptionEntity);
+    const userRepository = dataSource.getRepository(UserModel);
+    const pollRepository = dataSource.getRepository(PollModel);
+    const questionRepository = dataSource.getRepository(QuestionModel);
+    const questionOptionRepository = dataSource.getRepository(QuestionOptionModel);
 
     console.log('Cleaning database...');
     const queryRunner = dataSource.createQueryRunner();
