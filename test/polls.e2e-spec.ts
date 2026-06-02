@@ -7,14 +7,15 @@ import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import { DataSource, Repository } from 'typeorm';
 import { AppModule } from '../src/modules/app.module';
-import { UserEntity } from '../src/modules/users/entities/user.entity';
-import { PollEntity } from '../src/modules/polls/entities/polls.entity';
+import { UserModel } from '../src/modules/users/models/user.model';
+import { PollModel } from '../src/modules/polls/models/polls.model';
+
 
 describe('PollsController (e2e)', () => {
     let app: INestApplication;
     let dataSource: DataSource;
-    let userRepository: Repository<UserEntity>;
-    let pollRepository: Repository<PollEntity>;
+    let userRepository: Repository<UserModel>;
+    let pollRepository: Repository<PollModel>;
     let httpServer: any;
     let accessToken: string;
     let refreshToken: string;
@@ -65,8 +66,8 @@ describe('PollsController (e2e)', () => {
         httpServer = app.getHttpServer();
 
         dataSource = moduleFixture.get(DataSource);
-        userRepository = moduleFixture.get(getRepositoryToken(UserEntity));
-        pollRepository = moduleFixture.get(getRepositoryToken(PollEntity));
+        userRepository = moduleFixture.get(getRepositoryToken(UserModel));
+        pollRepository = moduleFixture.get(getRepositoryToken(PollModel));
     });
 
     beforeEach(async () => {

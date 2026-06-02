@@ -1,24 +1,25 @@
 import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PollModel } from '../polls/models/polls.model';
 import { PollsModule } from '../polls/polls.module';
-import { QUESTIONS_INJECTION_TOKENS } from './constants/questions-injection-tokens';
-import { QuestionOptionEntity } from '../question-options/entities/question-options.entity';
-import { QuestionEntity } from './entities/questions.entity';
-import { QuestionsController } from './questions.controller';
-import { QuestionsRepository } from './questions.repository';
-import { QuestionsService } from './questions.service';
-import { PollEntity } from '../polls/entities/polls.entity';
+import { OPTIONS_INJECTION_TOKENS } from './question-options/constants/option-injection-tokens';
+
+import { QuestionOptionModel } from './question-options/models/question-options.model';
+import { QuestionOptionsController } from './question-options/question-options.controller';
+import { QuestionOptionsRepository } from './question-options/question-options.repository';
+import { QuestionOptionsService } from './question-options/question-options.service';
+import { QUESTIONS_INJECTION_TOKENS } from './questions-variant/constants/questions-injection-tokens';
+import { QuestionModel } from './questions-variant/models/questions.model';
+import { QuestionsController } from './questions-variant/questions.controller';
+import { QuestionsRepository } from './questions-variant/questions.repository';
+import { QuestionsService } from './questions-variant/questions.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([
-            PollEntity,
-            QuestionEntity,
-            QuestionOptionEntity
-        ]),
-        PollsModule
+        TypeOrmModule.forFeature([PollModel, QuestionModel, QuestionOptionModel]),
+        PollsModule,
     ],
-    controllers: [QuestionsController],
+    controllers: [QuestionsController, QuestionOptionsController],
     providers: [
         Logger,
         {
@@ -29,6 +30,14 @@ import { PollEntity } from '../polls/entities/polls.entity';
             provide: QUESTIONS_INJECTION_TOKENS.IQUESTIONS_REPOSITORY,
             useClass: QuestionsRepository,
         },
+        {
+            provide: OPTIONS_INJECTION_TOKENS.IOPTIONS_SERVICE,
+            useClass: QuestionOptionsService,
+        },
+        {
+            provide: OPTIONS_INJECTION_TOKENS.IOPTIONS_REPOSITORY,
+            useClass: QuestionOptionsRepository,
+        },
     ],
 })
-export class QuestionsModule { }
+export class QuestionsModule {}

@@ -2,10 +2,10 @@ import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
 import migrations from '../modules/database/migrations';
-import { PollEntity } from '../modules/polls/entities/polls.entity';
-import { QuestionOptionEntity } from '../modules/question-options/entities/question-options.entity';
-import { QuestionEntity } from '../modules/questions/entities/questions.entity';
-import { UserEntity } from '../modules/users/entities/user.entity';
+import { PollModel } from '../modules/polls/models/polls.model';
+import { QuestionOptionModel } from '../modules/questions/question-options/models/question-options.model';
+import { QuestionModel } from '../modules/questions/questions-variant/models/questions.model';
+import { UserModel } from '../modules/users/models/user.model';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 dotenv.config({ path: envFilePath });
@@ -18,7 +18,7 @@ export default new DataSource({
     database: process.env.DB_DATABASE,
     port: Number(process.env.DB_PORT),
     synchronize: false,
-    entities: [UserEntity, PollEntity, QuestionEntity, QuestionOptionEntity],
+    entities: [UserModel, PollModel, QuestionModel, QuestionOptionModel],
     migrations,
     migrationsTableName: process.env.DB_MIGRATIONS_TABLE_NAME,
 });

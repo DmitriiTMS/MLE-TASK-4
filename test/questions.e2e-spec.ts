@@ -7,18 +7,20 @@ import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import { DataSource, Repository } from 'typeorm';
 import { AppModule } from '../src/modules/app.module';
-import { UserEntity } from '../src/modules/users/entities/user.entity';
-import { PollEntity } from '../src/modules/polls/entities/polls.entity';
-import { QuestionEntity } from '../src/modules/questions/entities/questions.entity';
-import { QuestionOptionEntity } from '../src/modules/question-options/entities/question-options.entity';
+import { UserModel } from '../src/modules/users/models/user.model';
+import { PollModel } from '../src/modules/polls/models/polls.model';
+import { QuestionModel } from '../src/modules/questions/questions-variant/models/questions.model';
+import { QuestionOptionModel } from '../src/modules/questions/question-options/models/question-options.model';
+
+
 
 describe('QuestionsController (e2e)', () => {
     let app: INestApplication;
     let dataSource: DataSource;
-    let userRepository: Repository<UserEntity>;
-    let pollRepository: Repository<PollEntity>;
-    let questionRepository: Repository<QuestionEntity>;
-    let questionOptionRepository: Repository<QuestionOptionEntity>;
+    let userRepository: Repository<UserModel>;
+    let pollRepository: Repository<PollModel>;
+    let questionRepository: Repository<QuestionModel>;
+    let questionOptionRepository: Repository<QuestionOptionModel>;
     let httpServer: any;
     let accessToken: string;
     let userId: number;
@@ -88,14 +90,14 @@ describe('QuestionsController (e2e)', () => {
         httpServer = app.getHttpServer();
 
         dataSource = moduleFixture.get(DataSource);
-        userRepository = moduleFixture.get(getRepositoryToken(UserEntity));
-        pollRepository = moduleFixture.get(getRepositoryToken(PollEntity));
-        questionRepository = moduleFixture.get(getRepositoryToken(QuestionEntity));
-        questionOptionRepository = moduleFixture.get(getRepositoryToken(QuestionOptionEntity));
+        userRepository = moduleFixture.get(getRepositoryToken(UserModel));
+        pollRepository = moduleFixture.get(getRepositoryToken(PollModel));
+        questionRepository = moduleFixture.get(getRepositoryToken(QuestionModel));
+        questionOptionRepository = moduleFixture.get(getRepositoryToken(QuestionOptionModel));
     });
 
     beforeEach(async () => {
-     
+
         await questionOptionRepository.query('TRUNCATE TABLE "question_options" CASCADE');
         await questionRepository.query('TRUNCATE TABLE "questions" CASCADE');
         await pollRepository.query('TRUNCATE TABLE "polls" CASCADE');
@@ -300,10 +302,10 @@ describe('QuestionsController (e2e)', () => {
                 type: 'multiple',
                 orderNum: 2,
                 options: [
-                    { text: 'JavaScript/TypeScript', orderNum: 1 },  
-                    { text: 'Python', orderNum: 2 },                 
-                    { text: 'Java', orderNum: 3 },                   
-                    { text: 'Go', orderNum: 4 }                     
+                    { text: 'JavaScript/TypeScript', orderNum: 1 },
+                    { text: 'Python', orderNum: 2 },
+                    { text: 'Java', orderNum: 3 },
+                    { text: 'Go', orderNum: 4 }
                 ]
             };
 
