@@ -1,5 +1,6 @@
 import { QuestionEntity } from '../../questions-variant/domain/questions.entity';
-import { ICreateOptionResponseData } from '../constants/types';
+import { CreateOptionResponseDto } from '../constants/types';
+
 import { QuestionOptionModel } from '../models/question-options.model';
 
 export class QuestionOptionEntity {
@@ -21,7 +22,7 @@ export class QuestionOptionEntity {
         return questionsOption;
     }
 
-    static toResponse(data: QuestionOptionEntity): ICreateOptionResponseData {
+    static toResponse(data: QuestionOptionEntity): CreateOptionResponseDto {
         return {
             id: data.id,
             text: data.text,
