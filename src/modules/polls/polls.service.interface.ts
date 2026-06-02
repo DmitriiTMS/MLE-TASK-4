@@ -20,4 +20,6 @@ export interface IPollsService {
     findOne(userId: number, pollId: number): Promise<PollEntity>;
     update(userId: number, pollId: number, data: UpdatePollDto): Promise<PollEntity>;
     remove(userId: number, pollId: number): Promise<void>;
+    toggleActive(userId: number, pollId: number, isActive: boolean): Promise<boolean>
+    togglePublic(userId: number, pollId: number, isPublic: boolean): Promise<boolean>
 }

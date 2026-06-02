@@ -8,7 +8,9 @@ import {
     Inject,
     Logger,
     Param,
+    ParseBoolPipe,
     ParseIntPipe,
+    Patch,
     Post,
     Put,
     Query,
@@ -42,7 +44,7 @@ export class PollsController {
         private readonly logger: Logger,
         @Inject(POLL_INJECTION_TOKENS.IPOLL_SERVICE)
         private readonly pollsService: IPollsService,
-    ) {}
+    ) { }
 
     @Post()
     @UseGuards(ThrottlerGuard)
@@ -58,13 +60,13 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - Creating poll - User ID: ${user.id}, ` +
-                `Data: ${JSON.stringify(createDto)}`,
+            `Data: ${JSON.stringify(createDto)}`,
         );
         try {
             const result = await this.pollsService.create(user.id, createDto);
             this.logger.log(
                 `[${this.context}] - Poll created successfully - User ID: ${user.id}, ` +
-                    `Poll ID: ${result.id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${result.id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -92,7 +94,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Polls fetched successfully` +
-                    `Count: ${result.data.length}, Duration: ${Date.now() - startTime}ms`,
+                `Count: ${result.data.length}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return {
@@ -123,7 +125,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll fetched successfully, ` +
-                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -148,7 +150,7 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - Updating poll - User ID: ${user.id}, Poll ID: ${id}, ` +
-                `Data: ${JSON.stringify(updateDto)}`,
+            `Data: ${JSON.stringify(updateDto)}`,
         );
 
         try {
@@ -156,7 +158,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll updated successfully - User ID: ${user.id}, ` +
-                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -182,10 +184,68 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll deleted successfully - User ID: ${user.id}, ` +
-                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
         } catch (error) {
             this.logError(error, method, route, { userId: user.id, pollId: id });
+            throw error;
+        }
+    }
+
+    @Patch(':id/public')
+    @UseGuards(ThrottlerGuard)
+    @HttpCode(HttpStatus.OK)
+    async togglePublic(
+        @CurrentUser() user: { id: number },
+        @Param('id', ParseIntPipe) id: number,
+        @Body('isPublic', ParseBoolPipe) isPublic: boolean,
+    ): Promise<{ isPublic: boolean }> {
+        const method = 'Patch';
+        const route = `/polls/${id}/public`;
+
+        this.logger.log(
+            `[${this.context}] - togglePublic poll - User ID: ${user.id}, ` +
+            `Poll ID: ${id}, New public status: ${isPublic}`,
+        );
+        try {
+
+            const updatedIsPublic = await this.pollsService.togglePublic(user.id, id, isPublic);
+            this.logger.log(
+                `[${this.context}] - Poll ${id} public status successfully changed to ${updatedIsPublic}`
+            );
+
+            return { isPublic: updatedIsPublic };
+        } catch (error: unknown) {
+            this.logError(error, method, route);
+            throw error;
+        }
+    }
+
+    @Patch(':id/active')
+    @UseGuards(ThrottlerGuard)
+    @HttpCode(HttpStatus.OK)
+    async toggleActive(
+        @CurrentUser() user: { id: number },
+        @Param('id', ParseIntPipe) id: number,
+        @Body('isActive', ParseBoolPipe) isActive: boolean,
+    ): Promise<{ isActive: boolean }> {
+        const method = 'Patch';
+        const route = `/polls/${id}/active`;
+
+        this.logger.log(
+            `[${this.context}] - toggleActive poll - User ID: ${user.id}, ` +
+            `Poll ID: ${id}, New active status: ${isActive}`,
+        );
+        try {
+
+            const updatedIsActive = await this.pollsService.toggleActive(user.id, id, isActive);
+            this.logger.log(
+                `[${this.context}] - Poll ${id} active status successfully changed to ${updatedIsActive}`
+            );
+
+            return { isActive: updatedIsActive };
+        } catch (error: unknown) {
+            this.logError(error, method, route);
             throw error;
         }
     }
@@ -196,7 +256,7 @@ export class PollsController {
 
         this.logger.error(
             `[${this.context}] - Request failed - Method: ${method}, Route: ${route}, ` +
-                `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
+            `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
         );
 
         if (errorStack && process.env.NODE_ENV !== 'production') {
