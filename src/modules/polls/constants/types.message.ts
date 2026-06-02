@@ -4,5 +4,5 @@ export const POLLS_MESSAGE = {
     NO_UPDATE_PERMISSION: 'You do not have permission to update this poll',
     NO_DELETE_PERMISSION: 'You do not have permission to delete this poll',
     SURVEY_NOT_AVAILABLE: 'Survey not available',
-    POLL_NOT_FOUND_OR_PRIVATE: 'The survey is private'
+    POLL_NOT_FOUND_OR_PRIVATE: 'The survey is private',
 };

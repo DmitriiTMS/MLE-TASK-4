@@ -8,10 +8,10 @@ import { PollsService } from './polls.service';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
-import { PollEntity } from './entities/polls.entity';
 import { RedisService } from '../redis/redis.service';
 import { KEYS_POLL } from './constants/types-redis';
 import { PaginatedResponse } from './constants/types';
+import { PollEntity } from './domain/polls.entity';
 
 // yarn test -- src/modules/polls/polls.service.spec.ts
 
