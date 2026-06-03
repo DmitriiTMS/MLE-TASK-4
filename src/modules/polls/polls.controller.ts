@@ -33,6 +33,8 @@ import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 
 import type { IPollsService } from './polls.service.interface';
+import { ApiToggleActiveDocumentation } from './decorators/swagger/swagger-toggle-active.decorator';
+import { ApiTogglePublicDocumentation } from './decorators/swagger/swagger-toggle-public.decorator';
 
 @ApiTags('Опросы')
 @Controller('polls')
@@ -195,6 +197,7 @@ export class PollsController {
     @Patch(':id/public')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.OK)
+    @ApiTogglePublicDocumentation()
     async togglePublic(
         @CurrentUser() user: { id: number },
         @Param('id', ParseIntPipe) id: number,
@@ -224,6 +227,7 @@ export class PollsController {
     @Patch(':id/active')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.OK)
+    @ApiToggleActiveDocumentation()
     async toggleActive(
         @CurrentUser() user: { id: number },
         @Param('id', ParseIntPipe) id: number,

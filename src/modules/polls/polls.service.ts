@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 import { USERS_INJECTION_TOKENS } from '../users/constants/users-injection-tokens';
 import { POLL_INJECTION_TOKENS } from './constants/poll-injection-tokens';
@@ -278,16 +278,16 @@ export class PollsService implements IPollsService {
 
             if (!poll.belongsToUser(userId)) {
                 this.logger.warn(
-                    `[${this.context}] - ${POLLS_MESSAGE.NO_DELETE_PERMISSION} - Poll ID: ${pollId}`,
+                    `[${this.context}] - ${POLLS_MESSAGE.POLL_UPDATE_ACTIVE} - Poll ID: ${pollId}`,
                 );
-                throw new ForbiddenException(POLLS_MESSAGE.NO_DELETE_PERMISSION);
+                throw new ForbiddenException(POLLS_MESSAGE.POLL_UPDATE_ACTIVE);
             }
 
             poll.setActive(isActive)
 
             const updatedIsActive = await this.pollsRepository.updateIsActive(poll);
             if (updatedIsActive === null) {
-                throw new InternalServerErrorException('Failed to update poll active status');
+                throw new BadRequestException('Failed to update poll active status');
             }
 
             await Promise.all([
@@ -328,16 +328,16 @@ export class PollsService implements IPollsService {
 
             if (!poll.belongsToUser(userId)) {
                 this.logger.warn(
-                    `[${this.context}] - ${POLLS_MESSAGE.NO_DELETE_PERMISSION} - Poll ID: ${pollId}`,
+                    `[${this.context}] - ${POLLS_MESSAGE.POLL_UPDATE_PUBLIC} - Poll ID: ${pollId}`,
                 );
-                throw new ForbiddenException(POLLS_MESSAGE.NO_DELETE_PERMISSION);
+                throw new ForbiddenException(POLLS_MESSAGE.POLL_UPDATE_PUBLIC);
             }
 
             poll.setPublic(isPublic)
 
             const updatedIsPublic = await this.pollsRepository.updateIsPublic(poll);
             if (updatedIsPublic === null) {
-                throw new InternalServerErrorException('Failed to update poll public status');
+                throw new BadRequestException('Failed to update poll active status');
             }
 
             await Promise.all([
