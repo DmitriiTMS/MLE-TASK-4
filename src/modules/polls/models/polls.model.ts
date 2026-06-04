@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { QuestionModel } from '../../questions/questions-variant/models/questions.model';
 import { UserModel } from '../../users/models/user.model';
+import { UsersAnswersModel } from '../../users-answers/models/users-answers.model';
 
 @Entity('polls')
 export class PollModel {
@@ -40,4 +41,7 @@ export class PollModel {
 
     @OneToMany(() => QuestionModel, (question) => question.poll, { cascade: true })
     questions: QuestionModel[];
+
+    @OneToMany(() => UsersAnswersModel, (usersAnswers) => usersAnswers.poll)
+    usersAnswers: UsersAnswersModel[];
 }

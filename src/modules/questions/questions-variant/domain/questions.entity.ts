@@ -87,7 +87,7 @@ export class QuestionEntity {
         };
     }
 
-    static toEntity(data: QuestionModel): QuestionEntity {
+    static toEntity(data: QuestionEntity): QuestionEntity {
         const entity = new QuestionEntity();
         entity.id = data.id;
         entity.pollId = data.pollId;

@@ -11,6 +11,7 @@ import { PollsModule } from './polls/polls.module';
 import { QuestionsModule } from './questions/questions.module';
 import { RedisModule } from './redis/redis.module';
 import { UsersModule } from './users/users.module';
+import { UsersAnswersModule } from './users-answers/users-answers.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -35,6 +36,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         AuthModule,
         PollsModule,
         QuestionsModule,
+        UsersAnswersModule
     ],
 })
 export class AppModule {}
