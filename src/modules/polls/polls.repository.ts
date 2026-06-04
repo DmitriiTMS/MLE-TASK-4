@@ -11,7 +11,7 @@ export class PollsRepository implements IPollsRepository {
     constructor(
         @InjectRepository(PollModel)
         private readonly pollRepository: Repository<PollModel>,
-    ) {}
+    ) { }
 
     async save(poll: PollEntity): Promise<PollEntity> {
         const savedPoll = await this.pollRepository.save(poll);
@@ -126,5 +126,15 @@ export class PollsRepository implements IPollsRepository {
 
     async remove(id: number) {
         await this.pollRepository.delete({ id });
+    }
+
+    async updateIsActive(poll: PollEntity): Promise<boolean> {
+        const savedPoll = await this.pollRepository.save(poll);
+        return savedPoll.isActive;
+    }
+
+    async updateIsPublic(poll: PollEntity): Promise<boolean> {
+        const savedPoll = await this.pollRepository.save(poll);
+        return savedPoll.isPublic;
     }
 }

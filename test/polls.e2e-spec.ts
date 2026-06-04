@@ -453,4 +453,281 @@ describe('PollsController (e2e)', () => {
         });
     });
 
+    describe('PATCH /polls/:id/active', () => {
+        let pollId: number;
+
+        beforeEach(async () => {
+            const response = await request(httpServer)
+                .post('/polls')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send(testPoll);
+            pollId = response.body.id;
+        });
+
+        it('should successfully toggle active status to false', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isActive: false })
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body).toHaveProperty('isActive');
+                    expect(res.body.isActive).toBe(false);
+                });
+        });
+
+        it('should successfully toggle active status to true', async () => {
+            await request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isActive: false });
+
+            return request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isActive: true })
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body.isActive).toBe(true);
+                });
+        });
+
+        it('should return 403 when user is not the owner', async () => {
+
+            const anotherUser = {
+                name: 'Another User',
+                email: 'another_active@example.com',
+                password: 'Test123!',
+            };
+
+            const registerResponse = await request(httpServer)
+                .post('/auth/register')
+                .send(anotherUser);
+
+            const anotherAccessToken = registerResponse.body.accessToken;
+
+            return request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .set('Authorization', `Bearer ${anotherAccessToken}`)
+                .send({ isActive: false })
+                .expect(403)
+                .expect((res) => {
+                    expect(res.body.message).toBe("You do not have permission to update this poll");
+                });
+        });
+
+        it('should return 404 when poll not found', () => {
+            return request(httpServer)
+                .patch('/polls/99999/active')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isActive: false })
+                .expect(404)
+                .expect((res) => {
+                    expect(res.body.message).toBe("Poll not found");
+                });
+        });
+
+        it('should return 401 when no token provided', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .send({ isActive: false })
+                .expect(401);
+        });
+
+        it('should return 400 when isActive is not a boolean', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isActive: 'not-a-boolean' })
+                .expect(400);
+        });
+
+        it('should return 400 when isActive is missing', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({})
+                .expect(400);
+        });
+
+        it('should return 400 when poll id is invalid', () => {
+            return request(httpServer)
+                .patch('/polls/invalid/active')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isActive: false })
+                .expect(400);
+        });
+    });
+
+    describe('PATCH /polls/:id/public', () => {
+        let pollId: number;
+
+        beforeEach(async () => {
+            const response = await request(httpServer)
+                .post('/polls')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send(testPoll);
+            pollId = response.body.id;
+        });
+
+        it('should successfully toggle public status to true', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: true })
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body).toHaveProperty('isPublic');
+                    expect(res.body.isPublic).toBe(true);
+                });
+        });
+
+        it('should successfully toggle public status to false', async () => {
+            await request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: true });
+
+            return request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: false })
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body.isPublic).toBe(false);
+                });
+        });
+
+        it('should allow another user to view poll when isPublic is true', async () => {
+
+            await request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: true });
+
+            const anotherUser = {
+                name: 'Another User',
+                email: 'another_public@example.com',
+                password: 'Test123!',
+            };
+
+            const registerResponse = await request(httpServer)
+                .post('/auth/register')
+                .send(anotherUser);
+
+            const anotherAccessToken = registerResponse.body.accessToken;
+
+            return request(httpServer)
+                .get(`/polls/${pollId}`)
+                .set('Authorization', `Bearer ${anotherAccessToken}`)
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body.id).toBe(pollId);
+                    expect(res.body.isPublic).toBe(true);
+                });
+        });
+
+        it('should return 403 when user is not the owner', async () => {
+            const anotherUser = {
+                name: 'Another User',
+                email: 'another_public2@example.com',
+                password: 'Test123!',
+            };
+
+            const registerResponse = await request(httpServer)
+                .post('/auth/register')
+                .send(anotherUser);
+
+            const anotherAccessToken = registerResponse.body.accessToken;
+
+            return request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${anotherAccessToken}`)
+                .send({ isPublic: true })
+                .expect(403)
+                .expect((res) => {
+                    expect(res.body.message).toBe("You do not have permission to update this poll");
+                });
+        });
+
+        it('should return 404 when poll not found', () => {
+            return request(httpServer)
+                .patch('/polls/99999/public')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: true })
+                .expect(404)
+                .expect((res) => {
+                    expect(res.body.message).toBe("Poll not found");
+                });
+        });
+
+        it('should return 401 when no token provided', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .send({ isPublic: true })
+                .expect(401);
+        });
+
+        it('should return 400 when isPublic is not a boolean', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: 'not-a-boolean' })
+                .expect(400);
+        });
+
+        it('should return 400 when isPublic is missing', () => {
+            return request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({})
+                .expect(400);
+        });
+
+        it('should return 400 when poll id is invalid', () => {
+            return request(httpServer)
+                .patch('/polls/invalid/public')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: true })
+                .expect(400);
+        });
+
+        it('should verify that changing public status does not affect active status', async () => {
+
+            await request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: true })
+                .expect(200);
+
+            return request(httpServer)
+                .get(`/polls/${pollId}`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body.isPublic).toBe(true);
+                    expect(res.body.isActive).toBe(true); 
+                });
+        });
+
+        it('should verify that changing active status does not affect public status', async () => {
+
+            await request(httpServer)
+                .patch(`/polls/${pollId}/active`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isActive: false })
+                .expect(200);
+
+
+            return request(httpServer)
+                .patch(`/polls/${pollId}/public`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ isPublic: true })
+                .expect(200)
+                .expect((res) => {
+                    expect(res.body.isPublic).toBe(true);
+                });
+        });
+    });
+
 });
