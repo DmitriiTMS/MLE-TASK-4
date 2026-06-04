@@ -1,4 +1,12 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    ForbiddenException,
+    Inject,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    NotFoundException,
+} from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 import { USERS_INJECTION_TOKENS } from '../users/constants/users-injection-tokens';
 import { POLL_INJECTION_TOKENS } from './constants/poll-injection-tokens';
@@ -24,14 +32,14 @@ export class PollsService implements IPollsService {
         @Inject(POLL_INJECTION_TOKENS.IPOLL_REPOSITORY)
         private readonly pollsRepository: IPollsRepository,
         private readonly redisService: RedisService,
-    ) { }
+    ) {}
 
     async create(userId: number, data: CreatePollDto): Promise<PollEntity> {
         const startTime = Date.now();
         const operation = 'create';
         this.logger.log(
             `[${this.context}] - Starting ${operation} operation - User ID: ${userId}, ` +
-            `Data: ${JSON.stringify(data)}`,
+                `Data: ${JSON.stringify(data)}`,
         );
         try {
             this.logger.log(`[${this.context}] - Finding user with ID: ${userId}`);
@@ -45,7 +53,7 @@ export class PollsService implements IPollsService {
             const duration = Date.now() - startTime;
             this.logger.log(
                 `[${this.context}] - ${operation} operation completed successfully - ` +
-                `User ID: ${userId}, Poll ID: ${savedPoll?.id}, Duration: ${duration}ms`,
+                    `User ID: ${userId}, Poll ID: ${savedPoll?.id}, Duration: ${duration}ms`,
             );
 
             await this.redisService.delPattern(KEYS_POLL.POLLS_ALL_PATTERN);
@@ -90,7 +98,7 @@ export class PollsService implements IPollsService {
 
                 this.logger.log(
                     `[${this.context}] - Polls fetched successfully ` +
-                    `Count: ${dbData.data.length}, Duration: ${Date.now() - startTime}ms`,
+                        `Count: ${dbData.data.length}, Duration: ${Date.now() - startTime}ms`,
                 );
 
                 return dbData;
@@ -104,7 +112,7 @@ export class PollsService implements IPollsService {
 
                 this.logger.log(
                     `[${this.context}] - Polls fetched successfully ` +
-                    `Count: ${polls.length}, Duration: ${Date.now() - startTime}ms`,
+                        `Count: ${polls.length}, Duration: ${Date.now() - startTime}ms`,
                 );
 
                 return result;
@@ -144,7 +152,7 @@ export class PollsService implements IPollsService {
 
                 this.logger.log(
                     `[${this.context}] - Poll fetched successfully, ` +
-                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                        `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
                 );
 
                 return pollEntity;
@@ -160,7 +168,7 @@ export class PollsService implements IPollsService {
 
                 this.logger.log(
                     `[${this.context}] - Poll fetched successfully, ` +
-                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                        `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
                 );
 
                 return pollEntity;
@@ -204,7 +212,7 @@ export class PollsService implements IPollsService {
 
             this.logger.log(
                 `[${this.context}] - Poll updated successfully - User ID: ${userId}, ` +
-                `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return updatedPoll;
@@ -249,7 +257,7 @@ export class PollsService implements IPollsService {
 
             this.logger.log(
                 `[${this.context}] - Poll deleted successfully - User ID: ${userId}, ` +
-                `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
             );
         } catch (error) {
             this.logger.error(`[${this.context}] - ${operation} operation failed`);
@@ -283,7 +291,7 @@ export class PollsService implements IPollsService {
                 throw new ForbiddenException(POLLS_MESSAGE.POLL_UPDATE_ACTIVE);
             }
 
-            poll.setActive(isActive)
+            poll.setActive(isActive);
 
             const updatedIsActive = await this.pollsRepository.updateIsActive(poll);
             if (updatedIsActive === null) {
@@ -297,10 +305,10 @@ export class PollsService implements IPollsService {
 
             this.logger.log(
                 `[${this.context}] - Poll ToggleActive successfully - User ID: ${userId}, ` +
-                `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
             );
 
-            return updatedIsActive
+            return updatedIsActive;
         } catch (error) {
             this.logger.error(`[${this.context}] - ${operation} operation failed`);
             throw error;
@@ -333,7 +341,7 @@ export class PollsService implements IPollsService {
                 throw new ForbiddenException(POLLS_MESSAGE.POLL_UPDATE_PUBLIC);
             }
 
-            poll.setPublic(isPublic)
+            poll.setPublic(isPublic);
 
             const updatedIsPublic = await this.pollsRepository.updateIsPublic(poll);
             if (updatedIsPublic === null) {
@@ -347,10 +355,10 @@ export class PollsService implements IPollsService {
 
             this.logger.log(
                 `[${this.context}] - Poll TogglePublic successfully - User ID: ${userId}, ` +
-                `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${pollId}, Duration: ${Date.now() - startTime}ms`,
             );
 
-            return updatedIsPublic
+            return updatedIsPublic;
         } catch (error) {
             this.logger.error(`[${this.context}] - ${operation} operation failed`);
             throw error;

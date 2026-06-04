@@ -13,5 +13,5 @@ export default [
     AddQuestionEntity1779805942012,
     AddQuestionOptionEntity1779806039605,
     AddColumnIsPublicInPollEntity1779868337388,
-    AddUsersAnswersModel1780562479567
+    AddUsersAnswersModel1780562479567,
 ];

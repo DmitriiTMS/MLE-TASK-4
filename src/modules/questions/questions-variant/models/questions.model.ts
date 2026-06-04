@@ -9,8 +9,8 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { PollModel } from '../../../polls/models/polls.model';
-import { QuestionOptionModel } from '../../question-options/models/question-options.model';
 import { UsersAnswersModel } from '../../../users-answers/models/users-answers.model';
+import { QuestionOptionModel } from '../../question-options/models/question-options.model';
 
 export type QuestionType = 'single' | 'multiple';
 

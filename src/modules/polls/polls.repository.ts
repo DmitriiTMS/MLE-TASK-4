@@ -11,7 +11,7 @@ export class PollsRepository implements IPollsRepository {
     constructor(
         @InjectRepository(PollModel)
         private readonly pollRepository: Repository<PollModel>,
-    ) { }
+    ) {}
 
     async save(poll: PollEntity): Promise<PollEntity> {
         const savedPoll = await this.pollRepository.save(poll);
@@ -128,13 +128,21 @@ export class PollsRepository implements IPollsRepository {
         await this.pollRepository.delete({ id });
     }
 
-    async updateIsActive(poll: PollEntity): Promise<boolean> {
-        const savedPoll = await this.pollRepository.save(poll);
-        return savedPoll.isActive;
+    async updateIsActive(poll: PollEntity): Promise<boolean | null> {
+        await this.pollRepository.update({ id: poll.id }, { isActive: poll.isActive });
+        const updatedPoll = await this.pollRepository.findOneBy({ id: poll.id });
+        if (!updatedPoll) {
+            return null;
+        }
+        return PollEntity.toEntity(updatedPoll).isActive;
     }
 
-    async updateIsPublic(poll: PollEntity): Promise<boolean> {
-        const savedPoll = await this.pollRepository.save(poll);
-        return savedPoll.isPublic;
+    async updateIsPublic(poll: PollEntity): Promise<boolean | null> {
+        await this.pollRepository.update({ id: poll.id }, { isActive: poll.isPublic });
+        const updatedPoll = await this.pollRepository.findOneBy({ id: poll.id });
+        if (!updatedPoll) {
+            return null;
+        }
+        return PollEntity.toEntity(updatedPoll).isPublic;
     }
 }

@@ -39,7 +39,7 @@ export class PollModel {
     @JoinColumn({ name: 'create_user_id' })
     createUser: UserModel;
 
-    @OneToMany(() => QuestionModel, (question) => question.poll, { cascade: true })
+    @OneToMany(() => QuestionModel, (question) => question.poll)
     questions: QuestionModel[];
 
     @OneToMany(() => UsersAnswersModel, (usersAnswers) => usersAnswers.poll)

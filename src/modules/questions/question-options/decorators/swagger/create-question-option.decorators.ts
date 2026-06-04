@@ -11,9 +11,9 @@ import {
     ApiForbiddenResponse,
     ApiParam,
 } from '@nestjs/swagger';
-import { CreateOptionDto } from '../../dto/create-question-option.dto';
-import { CreateOptionResponseDto } from '../../constants/types';
 import { QUESTIONS_MESSAGE } from '../../../questions-variant/constants/types.messages';
+import { CreateOptionResponseDto } from '../../constants/types';
+import { CreateOptionDto } from '../../dto/create-question-option.dto';
 
 export function ApiCreateOptionDocumentation() {
     return applyDecorators(
@@ -107,7 +107,7 @@ export function ApiCreateOptionDocumentation() {
                         "Поле 'text' не может быть пустым",
                         "Поле 'text' должно быть строкой",
                         "Поле 'orderNum' обязательно",
-                        "Вариант ответа с таким текстом уже существует для этого вопроса",
+                        'Вариант ответа с таким текстом уже существует для этого вопроса',
                     ],
                     error: 'Bad Request',
                 },

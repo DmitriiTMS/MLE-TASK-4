@@ -36,7 +36,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         AuthModule,
         PollsModule,
         QuestionsModule,
-        UsersAnswersModule
+        UsersAnswersModule,
     ],
 })
 export class AppModule {}

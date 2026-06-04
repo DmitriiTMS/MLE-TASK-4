@@ -5,6 +5,7 @@ import { PollModel } from '../../polls/models/polls.model';
 import { QuestionOptionModel } from '../../questions/question-options/models/question-options.model';
 import { QuestionModel } from '../../questions/questions-variant/models/questions.model';
 import { UserModel } from '../../users/models/user.model';
+import { UsersAnswersModel } from '../../users-answers/models/users-answers.model';
 // yarn seed
 
 dotenv.config();
@@ -19,7 +20,7 @@ async function seed() {
         username: process.env.DB_USERNAME || 'postgres',
         password: process.env.DB_PASSWORD || 'pass',
         database: process.env.DB_DATABASE || 'voting_system_dev',
-        entities: [UserModel, PollModel, QuestionModel, QuestionOptionModel],
+        entities: [UserModel, PollModel, QuestionModel, QuestionOptionModel, UsersAnswersModel],
         synchronize: false,
     });
 
@@ -199,7 +200,7 @@ async function seed() {
             question.text = qData.text;
             question.orderNum = qData.orderNum;
             question.type = qData.type;
-            
+
             const savedQuestion = await manager.save(question);
 
             // Создаем опции для вопроса через Model
@@ -210,7 +211,7 @@ async function seed() {
                 option.orderNum = idx + 1;
                 return option;
             });
-            
+
             await manager.save(options);
         }
     });

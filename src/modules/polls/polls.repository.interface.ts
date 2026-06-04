@@ -17,6 +17,6 @@ export interface IPollsRepository {
     }>;
     findById(id: number): Promise<PollEntity | null>;
     remove(id: number): Promise<void>;
-    updateIsActive(poll: PollEntity): Promise<boolean>
-    updateIsPublic(poll: PollEntity): Promise<boolean>
+    updateIsActive(poll: PollEntity): Promise<boolean | null>;
+    updateIsPublic(poll: PollEntity): Promise<boolean | null>;
 }

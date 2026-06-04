@@ -18,7 +18,7 @@ import { UserEntity } from '../../users/domain/user.entity';
 import { QuestionOptionEntity } from '../question-options/domain/question-options.entity';
 import { QuestionType } from './constants/question-type.enum';
 
-// yarn test -- src/modules/questions/questions.service.spec.ts
+// yarn test -- src/modules/questions/questions-variant/questions.service.spec.ts
 
 describe('QuestionsService', () => {
     let service: QuestionsService;

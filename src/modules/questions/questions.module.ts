@@ -39,5 +39,6 @@ import { QuestionsService } from './questions-variant/questions.service';
             useClass: QuestionOptionsRepository,
         },
     ],
+     exports: [QUESTIONS_INJECTION_TOKENS.IQUESTIONS_REPOSITORY],
 })
 export class QuestionsModule {}

@@ -1,8 +1,17 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
-import { UserModel } from "../../users/models/user.model";
-import { PollModel } from "../../polls/models/polls.model";
-import { QuestionModel } from "../../questions/questions-variant/models/questions.model";
-import { QuestionOptionModel } from "../../questions/question-options/models/question-options.model";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Unique,
+    UpdateDateColumn,
+} from 'typeorm';
+import { PollModel } from '../../polls/models/polls.model';
+import { QuestionOptionModel } from '../../questions/question-options/models/question-options.model';
+import { QuestionModel } from '../../questions/questions-variant/models/questions.model';
+import { UserModel } from '../../users/models/user.model';
 
 @Entity('users_answers')
 @Unique(['userId', 'pollId', 'questionId', 'optionId'])
