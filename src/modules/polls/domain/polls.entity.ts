@@ -173,4 +173,12 @@ export class PollEntity {
 
         return poll;
     }
+
+    setActive(isActive: boolean): void {
+        this.isActive = isActive;
+    }
+
+    setPublic(isPublic: boolean): void {
+        this.isPublic = isPublic;
+    }
 }

@@ -1,13 +1,9 @@
 import * as argon2 from 'argon2';
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
-import { PollEntity } from '../../polls/domain/polls.entity';
 import { PollModel } from '../../polls/models/polls.model';
-import { QuestionOptionEntity } from '../../questions/question-options/domain/question-options.entity';
 import { QuestionOptionModel } from '../../questions/question-options/models/question-options.model';
-import { QuestionEntity } from '../../questions/questions-variant/domain/questions.entity';
 import { QuestionModel } from '../../questions/questions-variant/models/questions.model';
-import { UserEntity } from '../../users/domain/user.entity';
 import { UserModel } from '../../users/models/user.model';
 // yarn seed
 
@@ -56,20 +52,32 @@ async function seed() {
 
     const passwordHash = await argon2.hash('1234');
 
-    const user1 = UserEntity.createInstance('user1', 'u1@bk.ru', passwordHash);
-    const user2 = UserEntity.createInstance('user2', 'u2@bk.ru', passwordHash);
+    // Создаем пользователей через Model
+    const user1 = new UserModel();
+    user1.name = 'user1';
+    user1.email = 'u1@bk.ru';
+    user1.passwordHash = passwordHash;
+
+    const user2 = new UserModel();
+    user2.name = 'user2';
+    user2.email = 'u2@bk.ru';
+    user2.passwordHash = passwordHash;
+
     const [savedUser1, savedUser2] = await userRepository.save([user1, user2]);
 
-    const poll1 = PollEntity.createInstance(
-        'Опрос о предпочтениях в IT',
-        'Расскажите о ваших предпочтениях в программировании',
-        savedUser1,
-    );
-    const poll2 = PollEntity.createInstance(
-        'Опрос о здоровом образе жизни',
-        'Поделитесь своими привычками',
-        savedUser2,
-    );
+    // Создаем опросы через Model
+    const poll1 = new PollModel();
+    poll1.title = 'Опрос о предпочтениях в IT';
+    poll1.description = 'Расскажите о ваших предпочтениях в программировании';
+    poll1.createUser = savedUser1;
+    poll1.isActive = true;
+
+    const poll2 = new PollModel();
+    poll2.title = 'Опрос о здоровом образе жизни';
+    poll2.description = 'Поделитесь своими привычками';
+    poll2.createUser = savedUser2;
+    poll2.isActive = true;
+
     const [savedPoll1, savedPoll2] = await pollRepository.save([poll1, poll2]);
 
     const questionsData = [
@@ -185,18 +193,24 @@ async function seed() {
 
     await dataSource.transaction(async (manager) => {
         for (const qData of questionsData) {
-            const question = QuestionEntity.createInstance(
-                qData.pollId,
-                qData.text,
-                qData.orderNum,
-                qData.type,
-            );
+            // Создаем вопрос через Model
+            const question = new QuestionModel();
+            question.pollId = qData.pollId;
+            question.text = qData.text;
+            question.orderNum = qData.orderNum;
+            question.type = qData.type;
+            
             const savedQuestion = await manager.save(question);
 
-            // Создаем опции для вопроса
-            const options = qData.options.map((text, idx) =>
-                QuestionOptionEntity.createInstance(savedQuestion.id, text, idx + 1),
-            );
+            // Создаем опции для вопроса через Model
+            const options = qData.options.map((text, idx) => {
+                const option = new QuestionOptionModel();
+                option.questionId = savedQuestion.id;
+                option.text = text;
+                option.orderNum = idx + 1;
+                return option;
+            });
+            
             await manager.save(options);
         }
     });

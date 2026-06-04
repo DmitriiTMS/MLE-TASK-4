@@ -1,5 +1,6 @@
 import {
     ForbiddenException,
+    InternalServerErrorException,
     Logger,
     NotFoundException,
 } from '@nestjs/common';
@@ -32,6 +33,8 @@ interface IPollsRepository {
     }>;
     findById(id: number): Promise<PollEntity | null>;
     remove(id: number): Promise<void>;
+    updateIsActive(poll: PollEntity): Promise<boolean>
+    updateIsPublic(poll: PollEntity): Promise<boolean>
 }
 
 interface IRedisService {
@@ -54,7 +57,7 @@ describe('PollsService', () => {
         email: 'test@example.com',
     };
 
-    const mockPollEntity = {
+    let mockPollEntity: PollEntity = {
         id: 1,
         title: 'Test Poll',
         description: 'Test Description',
@@ -130,6 +133,8 @@ describe('PollsService', () => {
                         findAll: jest.fn(),
                         findById: jest.fn(),
                         remove: jest.fn(),
+                        updateIsActive: jest.fn(),
+                        updateIsPublic: jest.fn(),
                     },
                 },
                 {
@@ -435,6 +440,175 @@ describe('PollsService', () => {
             jest.spyOn(pollsRepository, 'remove').mockRejectedValue(new Error('Database error'));
 
             await expect(pollsService.remove(userId, pollId)).rejects.toThrow('Database error');
+            expect(logger.error).toHaveBeenCalled();
+        });
+    });
+    describe('toggleActive', () => {
+        const userId = 1;
+        const pollId = 1;
+        const cacheKey = `poll:${pollId}`;
+        const isActive = true;
+
+        beforeEach(() => {
+            mockPollEntity = new PollEntity();
+            mockPollEntity.id = pollId;
+            mockPollEntity.title = 'Test Poll';
+            mockPollEntity.isActive = false;
+            mockPollEntity.isPublic = false;
+
+            jest.spyOn(mockPollEntity, 'belongsToUser').mockReturnValue(true);
+            jest.spyOn(mockPollEntity, 'setActive').mockImplementation(() => { });
+        });
+
+        it('should successfully toggle active status and invalidate cache', async () => {
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+            jest.spyOn(pollsRepository, 'updateIsActive').mockResolvedValue(isActive);
+            jest.spyOn(redisService, 'del').mockResolvedValue(undefined);
+            jest.spyOn(redisService, 'delPattern').mockResolvedValue(undefined);
+
+            const result = await pollsService.toggleActive(userId, pollId, isActive);
+
+            expect(pollsRepository.findById).toHaveBeenCalledWith(pollId);
+            expect(mockPollEntity.setActive).toHaveBeenCalledWith(isActive);
+            expect(pollsRepository.updateIsActive).toHaveBeenCalledWith(mockPollEntity);
+            expect(redisService.del).toHaveBeenCalledWith(cacheKey);
+            expect(redisService.delPattern).toHaveBeenCalledWith(KEYS_POLL.POLLS_ALL_PATTERN);
+            expect(result).toBe(isActive);
+            expect(logger.log).toHaveBeenCalled();
+        });
+
+        it('should successfully toggle active status to false', async () => {
+            const isActiveFalse = false;
+
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+            jest.spyOn(pollsRepository, 'updateIsActive').mockResolvedValue(isActiveFalse);
+            jest.spyOn(redisService, 'del').mockResolvedValue(undefined);
+            jest.spyOn(redisService, 'delPattern').mockResolvedValue(undefined);
+
+            const result = await pollsService.toggleActive(userId, pollId, isActiveFalse);
+
+            expect(mockPollEntity.setActive).toHaveBeenCalledWith(isActiveFalse);
+            expect(pollsRepository.updateIsActive).toHaveBeenCalledWith(mockPollEntity);
+            expect(result).toBe(isActiveFalse);
+        });
+
+        it('should throw NotFoundException when poll does not exist', async () => {
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(null);
+
+            await expect(pollsService.toggleActive(userId, pollId, isActive)).rejects.toThrow(
+                NotFoundException,
+            );
+            expect(pollsRepository.updateIsActive).not.toHaveBeenCalled();
+            expect(redisService.del).not.toHaveBeenCalled();
+            expect(logger.warn).toHaveBeenCalled();
+        });
+
+        it('should throw ForbiddenException when user is not the owner', async () => {
+            jest.spyOn(mockPollEntity, 'belongsToUser').mockReturnValue(false);
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+
+            await expect(pollsService.toggleActive(userId, pollId, isActive)).rejects.toThrow(
+                ForbiddenException,
+            );
+            expect(pollsRepository.updateIsActive).not.toHaveBeenCalled();
+            expect(redisService.del).not.toHaveBeenCalled();
+            expect(logger.warn).toHaveBeenCalled();
+        });
+
+        it('should handle repository errors', async () => {
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+            jest.spyOn(pollsRepository, 'updateIsActive').mockRejectedValue(
+                new Error('Database error'),
+            );
+
+            await expect(pollsService.toggleActive(userId, pollId, isActive)).rejects.toThrow(
+                'Database error',
+            );
+            expect(logger.error).toHaveBeenCalled();
+        });
+    });
+
+    describe('togglePublic', () => {
+        const userId = 1;
+        const pollId = 1;
+        const cacheKey = `poll:${pollId}`;
+        const isPublic = true;
+
+        beforeEach(() => {
+            mockPollEntity = new PollEntity();
+            mockPollEntity.id = pollId;
+            mockPollEntity.title = 'Test Poll';
+            mockPollEntity.isActive = false;
+            mockPollEntity.isPublic = false;
+
+            jest.spyOn(mockPollEntity, 'belongsToUser').mockReturnValue(true);
+            jest.spyOn(mockPollEntity, 'setPublic').mockImplementation(() => { });
+        });
+
+        it('should successfully toggle public status and invalidate cache', async () => {
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+            jest.spyOn(pollsRepository, 'updateIsPublic').mockResolvedValue(isPublic);
+            jest.spyOn(redisService, 'del').mockResolvedValue(undefined);
+            jest.spyOn(redisService, 'delPattern').mockResolvedValue(undefined);
+
+            const result = await pollsService.togglePublic(userId, pollId, isPublic);
+
+            expect(pollsRepository.findById).toHaveBeenCalledWith(pollId);
+            expect(mockPollEntity.setPublic).toHaveBeenCalledWith(isPublic);
+            expect(pollsRepository.updateIsPublic).toHaveBeenCalledWith(mockPollEntity);
+            expect(redisService.del).toHaveBeenCalledWith(cacheKey);
+            expect(redisService.delPattern).toHaveBeenCalledWith(KEYS_POLL.POLLS_ALL_PATTERN);
+            expect(result).toBe(isPublic);
+            expect(logger.log).toHaveBeenCalled();
+        });
+
+        it('should successfully toggle public status to false', async () => {
+            const isPublicFalse = false;
+
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+            jest.spyOn(pollsRepository, 'updateIsPublic').mockResolvedValue(isPublicFalse);
+            jest.spyOn(redisService, 'del').mockResolvedValue(undefined);
+            jest.spyOn(redisService, 'delPattern').mockResolvedValue(undefined);
+
+            const result = await pollsService.togglePublic(userId, pollId, isPublicFalse);
+
+            expect(mockPollEntity.setPublic).toHaveBeenCalledWith(isPublicFalse);
+            expect(pollsRepository.updateIsPublic).toHaveBeenCalledWith(mockPollEntity);
+            expect(result).toBe(isPublicFalse);
+        });
+
+        it('should throw NotFoundException when poll does not exist', async () => {
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(null);
+
+            await expect(pollsService.togglePublic(userId, pollId, isPublic)).rejects.toThrow(
+                NotFoundException,
+            );
+            expect(pollsRepository.updateIsPublic).not.toHaveBeenCalled();
+            expect(redisService.del).not.toHaveBeenCalled();
+            expect(logger.warn).toHaveBeenCalled();
+        });
+
+        it('should throw ForbiddenException when user is not the owner', async () => {
+            jest.spyOn(mockPollEntity, 'belongsToUser').mockReturnValue(false);
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+
+            await expect(pollsService.togglePublic(userId, pollId, isPublic)).rejects.toThrow(
+                ForbiddenException,
+            );
+            expect(pollsRepository.updateIsPublic).not.toHaveBeenCalled();
+            expect(redisService.del).not.toHaveBeenCalled();
+            expect(logger.warn).toHaveBeenCalled();
+        });
+
+        it('should handle repository errors', async () => {
+            jest.spyOn(pollsRepository, 'findById').mockResolvedValue(mockPollEntity);
+            jest.spyOn(pollsRepository, 'updateIsPublic').mockRejectedValue(
+                new Error('Database error'),
+            );
+
+            await expect(pollsService.togglePublic(userId, pollId, isPublic)).rejects.toThrow(
+                'Database error',
+            );
             expect(logger.error).toHaveBeenCalled();
         });
     });
