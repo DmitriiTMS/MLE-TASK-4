@@ -9,21 +9,24 @@ git clone https://github.com/DmitriiTMS/MLE-TASK-4
 cd MLE-TASK-4
 
 3. Настроить переменные окружения:
-Для удобства запуска сразу есть файл .env.production с установленными значениями
+для удобства запуска сразу есть файл .env.production с установленными значениями
 
-4. Запустить проект с помощью Docker:
+4. Установить зависимости:
+yarn install
+
+5. Запустить проект с помощью Docker:
 docker-compose --env-file .env.production up -d
 
-5. Запустить миграции:
+6. Запустить миграции:
 yarn migration:run:prod
 
-6. Собрать проект:
+7. Собрать проект:
 yarn build
 
-7. Запустить проект:
+8. Запустить проект:
 yarn start:prod
 
-8. Импортировать коллекцию Postman:
-bмпортируйте файл MLE-TASK-4.postman_collection из корня репозитория в Postman.
+9. Импортировать коллекцию Postman:
+импортируйте файл MLE-TASK-4.postman_collection из корня репозитория в Postman.
 
 
