@@ -1,0 +1,736 @@
+{
+  "info": {
+    "_postman_id": "94e2e538-5720-4274-b614-29ea545838ae",
+    "name": "MLE-TASK-4",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19313337"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoibjFAYmsucnUiLCJpYXQiOjE3NzgyNTA0MDMsImV4cCI6MTc3ODI1MTMwM30.G_pEt-F0kJSpl66AOYtzy1FW-P_52oSUGpsxgR5j8dU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/auth/get-me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "auth",
+                "get-me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"name 10\",\r\n    \"email\": \"u10@bk.ru\",\r\n    \"password\": \"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"u2@bk.ru\",\r\n    \"password\": \"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/auth/refresh-token",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoibjFAYmsucnUiLCJpYXQiOjE3NzgyMzkzMDcsImV4cCI6MTc3ODI0MDIwN30.CjSZRp8Id5gjIVs_9yNRIX695-LP_OgcR1OttXSKHEA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/auth/logout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Polls",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoibjNAYmsucnUiLCJpYXQiOjE3Nzk5NjI2MzAsImV4cCI6MTc3OTk2MzUzMH0.3PJweZd9KRX31IHiXScOIGo22an7NF11SIqOnCdCzOU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"title 2\",\r\n    \"description\": \"description 2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/polls",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAll",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImVtYWlsIjoibjJAYmsucnUiLCJpYXQiOjE3Nzk4NzE1MzEsImV4cCI6MTc3OTg3MjQzMX0.yKE9LoNLRPh-qPu4Ye3DV4Ec6-Az8coJ8sEFHhCABAs",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/polls",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getOne",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImVtYWlsIjoibjJAYmsucnUiLCJpYXQiOjE3Nzk0NDgyMjUsImV4cCI6MTc3OTQ0OTEyNX0.sF6dWBbulhKVZt6LkO_GjqWXX-CciaHX26JKTNun6R8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/polls/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "remove",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImVtYWlsIjoibjJAYmsucnUiLCJpYXQiOjE3Nzk0NDg1ODYsImV4cCI6MTc3OTQ0OTQ4Nn0._Vw0EGzk-2D0PYnODAbjx8Ozchznx4E9S5oJZ_-CXVk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/polls/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoibjNAYmsucnUiLCJpYXQiOjE3Nzk5NjIxMzgsImV4cCI6MTc3OTk2MzAzOH0.MGtUUaWK7jslQvgHdadlmxAdQxgzhHGRhaAGcO7CtNo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"title 888888888888888\",\r\n    \"description\": \"description 333\",\r\n    \"isActive\": false,\r\n    \"isPublic\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/polls/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggleActive",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidTFAYmsucnUiLCJpYXQiOjE3ODA0MTQxMjcsImV4cCI6MTc4MDQxNTAyN30.5ld6WvXF-bAqjHluTOU8Ij0fLD8lgRbTRt50XlNzzcY",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isActive\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/polls/1/active",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "1",
+                "active"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "togglePublic",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidTFAYmsucnUiLCJpYXQiOjE3ODA0MTQxMjcsImV4cCI6MTc4MDQxNTAyN30.5ld6WvXF-bAqjHluTOU8Ij0fLD8lgRbTRt50XlNzzcY",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isPublic\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/polls/1/public",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "1",
+                "public"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Questions",
+      "item": [
+        {
+          "name": "createQuestionWithOptions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoibjNAYmsucnUiLCJpYXQiOjE3Nzk5NjI2MzAsImV4cCI6MTc3OTk2MzUzMH0.3PJweZd9KRX31IHiXScOIGo22an7NF11SIqOnCdCzOU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"text\": \"Вопрос 444\",\r\n  \"type\": \"single\",\r\n  \"orderNum\": 1,\r\n  \"options\": [\r\n    { \"text\": \"вариант 1\", \"orderNum\": 1 },\r\n    { \"text\": \"вариант 2\", \"orderNum\": 2 }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/polls/3/questions",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "3",
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findAllQuestionWithOptions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidTFAYmsucnUiLCJpYXQiOjE3Nzk5NjkwNjgsImV4cCI6MTc3OTk2OTk2OH0.REf0OAKIDCLfkm2cP86PGMPp0HaHY5v81M72lWjeL5Y",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/polls/1/questions",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "1",
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findQuestion",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidTFAYmsucnUiLCJpYXQiOjE3ODA1ODIzNzksImV4cCI6MTc4MDU4MzI3OX0.8Y1tp5eXenO-hc-oGXkrQeiE-ArOnRe_qC6-STgKCm8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/polls/1/questions/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "1",
+                "questions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteQuestion",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidTFAYmsucnUiLCJpYXQiOjE3Nzk5Njk4NTksImV4cCI6MTc3OTk3MDc1OX0.aI7z0NXdPannVRWWTm3uYZJkYoVuBuBMyUlQ0AYgUsM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/polls/1/questions/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "1",
+                "questions",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateQuestion",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImVtYWlsIjoidTJAYmsucnUiLCJpYXQiOjE3Nzk5NzY2ODgsImV4cCI6MTc3OTk3NzU4OH0.y4LgHbOL2liqTb8phfkJ9HLMnj_MzsDCybQJR7UJ9ws",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"text\": \"Вопрос 4447777\",\r\n  \"type\": \"single\",\r\n  \"orderNum\": 1,\r\n  \"options\": [\r\n    { \"text\": \"вариант 1\", \"orderNum\": 1 },\r\n    { \"text\": \"вариант 2\", \"orderNum\": 2 },\r\n    { \"text\": \"вариант 1\", \"orderNum\": 1 },\r\n    { \"text\": \"вариант 2\", \"orderNum\": 2 },\r\n    { \"text\": \"вариант 23333333333333333\", \"orderNum\": 2 }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/polls/2/questions/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "polls",
+                "2",
+                "questions",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "QuestionOptions",
+      "item": [
+        {
+          "name": "createOption",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidTFAYmsucnUiLCJpYXQiOjE3ODAwNjc3MjYsImV4cCI6MTc4MDA2ODYyNn0.oDwVB1Q3ntN36LYbRtRna4yDxPEE8xHtzYZgUHkxAwc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"text\":\"11111\",\r\n    \"orderNum\": 7\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/question/3/option",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "question",
+                "3",
+                "option"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "UsersAnswers",
+      "item": [
+        {
+          "name": "createAnswer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJlbWFpbCI6InUxMEBiay5ydSIsImlhdCI6MTc4MDY1NzI1OCwiZXhwIjoxNzgwNjU4MTU4fQ.yOnMTH2CbZwqfbuWXi0y-h7iwvIAkBrryD2vwaaDezE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"questionId\": 1,\r\n    \"questionOptionIds\": [\r\n        1\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4200/api/answers/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "answers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getCountAnswers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImVtYWlsIjoidTJAYmsucnUiLCJpYXQiOjE3ODA2NjU3MDEsImV4cCI6MTc4MDY2NjYwMX0.ZnNmayoRWZBlzwwJchn7DeuC2-Hu0Pu1RLfqbLcE0e0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4200/api/answers/10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4200",
+              "path": [
+                "api",
+                "answers",
+                "10"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
