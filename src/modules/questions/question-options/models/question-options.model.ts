@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UsersAnswersModel } from '../../../users-answers/models/users-answers.model';
 import { QuestionModel } from '../../questions-variant/models/questions.model';
 
 @Entity('question_options')
@@ -20,4 +21,7 @@ export class QuestionOptionModel {
     })
     @JoinColumn({ name: 'question_id' })
     question: QuestionModel;
+
+    @OneToMany(() => UsersAnswersModel, (usersAnswers) => usersAnswers.option)
+    usersAnswers: UsersAnswersModel[];
 }

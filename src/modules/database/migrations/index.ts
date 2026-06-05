@@ -4,6 +4,7 @@ import { AddPollEntity1778933169439 } from './1778933169439-AddPollEntity';
 import { AddQuestionEntity1779805942012 } from './1779805942012-AddQuestionEntity';
 import { AddQuestionOptionEntity1779806039605 } from './1779806039605-AddQuestionOptionEntity';
 import { AddColumnIsPublicInPollEntity1779868337388 } from './1779868337388-AddColumnIsPublicInPollEntity';
+import { AddUsersAnswersModel1780562479567 } from './1780562479567-AddUsersAnswersModel';
 
 export default [
     AddUserEntity1777626621479,
@@ -12,4 +13,5 @@ export default [
     AddQuestionEntity1779805942012,
     AddQuestionOptionEntity1779806039605,
     AddColumnIsPublicInPollEntity1779868337388,
+    AddUsersAnswersModel1780562479567,
 ];

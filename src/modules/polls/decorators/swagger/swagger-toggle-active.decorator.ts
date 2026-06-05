@@ -1,6 +1,16 @@
-import { applyDecorators, HttpStatus } from "@nestjs/common";
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTooManyRequestsResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
-import { POLLS_MESSAGE } from "../../constants/types.message";
+import { applyDecorators, HttpStatus } from '@nestjs/common';
+import {
+    ApiBadRequestResponse,
+    ApiBearerAuth,
+    ApiBody,
+    ApiForbiddenResponse,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTooManyRequestsResponse,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { POLLS_MESSAGE } from '../../constants/types.message';
 
 export function ApiToggleActiveDocumentation() {
     return applyDecorators(

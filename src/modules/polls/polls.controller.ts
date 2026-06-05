@@ -26,6 +26,8 @@ import { ApiCreatePollDocumentation } from './decorators/swagger/swagger-create-
 import { ApiFindAllPollsDocumentation } from './decorators/swagger/swagger-findAll-poll.decorator';
 import { ApiFindOnePollDocumentation } from './decorators/swagger/swagger-findOne-poll.decorator';
 import { ApiRemovePollDocumentation } from './decorators/swagger/swagger-remove-poll.decorator';
+import { ApiToggleActiveDocumentation } from './decorators/swagger/swagger-toggle-active.decorator';
+import { ApiTogglePublicDocumentation } from './decorators/swagger/swagger-toggle-public.decorator';
 import { ApiUpdatePollDocumentation } from './decorators/swagger/swagger-update-poll.decorator';
 import { PollEntity } from './domain/polls.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
@@ -33,8 +35,6 @@ import { PaginationDto } from './dto/pagination-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 
 import type { IPollsService } from './polls.service.interface';
-import { ApiToggleActiveDocumentation } from './decorators/swagger/swagger-toggle-active.decorator';
-import { ApiTogglePublicDocumentation } from './decorators/swagger/swagger-toggle-public.decorator';
 
 @ApiTags('Опросы')
 @Controller('polls')
@@ -46,7 +46,7 @@ export class PollsController {
         private readonly logger: Logger,
         @Inject(POLL_INJECTION_TOKENS.IPOLL_SERVICE)
         private readonly pollsService: IPollsService,
-    ) { }
+    ) {}
 
     @Post()
     @UseGuards(ThrottlerGuard)
@@ -62,13 +62,13 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - Creating poll - User ID: ${user.id}, ` +
-            `Data: ${JSON.stringify(createDto)}`,
+                `Data: ${JSON.stringify(createDto)}`,
         );
         try {
             const result = await this.pollsService.create(user.id, createDto);
             this.logger.log(
                 `[${this.context}] - Poll created successfully - User ID: ${user.id}, ` +
-                `Poll ID: ${result.id}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${result.id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -96,7 +96,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Polls fetched successfully` +
-                `Count: ${result.data.length}, Duration: ${Date.now() - startTime}ms`,
+                    `Count: ${result.data.length}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return {
@@ -127,7 +127,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll fetched successfully, ` +
-                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -152,7 +152,7 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - Updating poll - User ID: ${user.id}, Poll ID: ${id}, ` +
-            `Data: ${JSON.stringify(updateDto)}`,
+                `Data: ${JSON.stringify(updateDto)}`,
         );
 
         try {
@@ -160,7 +160,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll updated successfully - User ID: ${user.id}, ` +
-                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
 
             return result.toResponse();
@@ -186,7 +186,7 @@ export class PollsController {
 
             this.logger.log(
                 `[${this.context}] - Poll deleted successfully - User ID: ${user.id}, ` +
-                `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
+                    `Poll ID: ${id}, Duration: ${Date.now() - startTime}ms`,
             );
         } catch (error) {
             this.logError(error, method, route, { userId: user.id, pollId: id });
@@ -208,13 +208,12 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - togglePublic poll - User ID: ${user.id}, ` +
-            `Poll ID: ${id}, New public status: ${isPublic}`,
+                `Poll ID: ${id}, New public status: ${isPublic}`,
         );
         try {
-
             const updatedIsPublic = await this.pollsService.togglePublic(user.id, id, isPublic);
             this.logger.log(
-                `[${this.context}] - Poll ${id} public status successfully changed to ${updatedIsPublic}`
+                `[${this.context}] - Poll ${id} public status successfully changed to ${updatedIsPublic}`,
             );
 
             return { isPublic: updatedIsPublic };
@@ -238,13 +237,12 @@ export class PollsController {
 
         this.logger.log(
             `[${this.context}] - toggleActive poll - User ID: ${user.id}, ` +
-            `Poll ID: ${id}, New active status: ${isActive}`,
+                `Poll ID: ${id}, New active status: ${isActive}`,
         );
         try {
-
             const updatedIsActive = await this.pollsService.toggleActive(user.id, id, isActive);
             this.logger.log(
-                `[${this.context}] - Poll ${id} active status successfully changed to ${updatedIsActive}`
+                `[${this.context}] - Poll ${id} active status successfully changed to ${updatedIsActive}`,
             );
 
             return { isActive: updatedIsActive };
@@ -260,7 +258,7 @@ export class PollsController {
 
         this.logger.error(
             `[${this.context}] - Request failed - Method: ${method}, Route: ${route}, ` +
-            `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
+                `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
         );
 
         if (errorStack && process.env.NODE_ENV !== 'production') {

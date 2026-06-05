@@ -32,34 +32,13 @@ export class QuestionOptionsService implements IQuestionOptionsService {
         private readonly pollsRepository: IPollsRepository,
         @Inject(OPTIONS_INJECTION_TOKENS.IOPTIONS_REPOSITORY)
         private readonly questionOptionsRepository: IQuestionOptionsRepository,
-    ) {}
+    ) { }
 
     async createOption(data: ICreateOptioData): Promise<QuestionOptionEntity> {
         const operation = 'createOption';
         const { userId, questionId, createOptionDto } = data;
 
-        const question = await this.questionsRepository.findOneQuestion(questionId);
-        if (!question) {
-            this.logger.warn(
-                `[${this.context}] - [${operation}] - Question with ID: ${questionId} not found`,
-            );
-            throw new NotFoundException(QUESTIONS_MESSAGE.QUESTION_NOT_FOUND);
-        }
-
-        const poll = await this.pollsRepository.findById(question.pollId);
-        if (!poll) {
-            this.logger.warn(
-                `[${this.context}] - [${operation}] - Poll with ID: ${question.pollId} not found`,
-            );
-            throw new NotFoundException(POLLS_MESSAGE.POLL_NOT_FOUND);
-        }
-
-        if (!poll.belongsToUser(userId)) {
-            this.logger.warn(
-                `[${this.context}] - [${operation}] - ${QUESTIONS_MESSAGE.USER_NOT_THE_SURVEY_CREATOR}`,
-            );
-            throw new ForbiddenException(QUESTIONS_MESSAGE.USER_NOT_THE_SURVEY_CREATOR);
-        }
+        const question = await this.checkingPollQuestions(questionId, userId, operation)
 
         const existingOrderNum = question.questionOptions?.some(
             (opt) => opt.orderNum === createOptionDto.orderNum,
@@ -90,6 +69,23 @@ export class QuestionOptionsService implements IQuestionOptionsService {
         const operation = 'deleteOption';
         const { userId, questionId, optionId } = data;
 
+        await this.checkingPollQuestions(questionId, userId, operation)
+
+        const option = await this.questionOptionsRepository.findOptionById(optionId);
+        if (!option) {
+            throw new NotFoundException(`Option with ID ${optionId} not found`);
+        }
+
+        try {
+            await this.questionOptionsRepository.deleteOption(optionId);
+            this.logger.log(`[${this.context}] - [${operation}] -  optionId:${optionId}`);
+        } catch (error) {
+            this.logger.error(`${this.context} - [${operation}] - ${error}`);
+            throw error;
+        }
+    }
+
+    async checkingPollQuestions(questionId: number, userId: number, operation: string) {
         const question = await this.questionsRepository.findOneQuestion(questionId);
         if (!question) {
             this.logger.warn(
@@ -113,17 +109,6 @@ export class QuestionOptionsService implements IQuestionOptionsService {
             throw new ForbiddenException(QUESTIONS_MESSAGE.USER_NOT_THE_SURVEY_CREATOR);
         }
 
-        const option = await this.questionOptionsRepository.findOptionById(optionId);
-        if (!option) {
-            throw new NotFoundException(`Option with ID ${optionId} not found`);
-        }
-
-        try {
-            await this.questionOptionsRepository.deleteOption(optionId);
-            this.logger.log(`[${this.context}] - [${operation}] -  optionId:${optionId}`);
-        } catch (error) {
-            this.logger.error(`${this.context} - [${operation}] - ${error}`);
-            throw error;
-        }
+        return question
     }
 }

@@ -8,6 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { PollModel } from '../../polls/models/polls.model';
+import { UsersAnswersModel } from '../../users-answers/models/users-answers.model';
 
 @Entity('users')
 export class UserModel {
@@ -33,4 +34,7 @@ export class UserModel {
     @Exclude()
     @OneToMany(() => PollModel, (poll) => poll.createUser)
     polls: PollModel[];
+
+    @OneToMany(() => UsersAnswersModel, (usersAnswers) => usersAnswers.user)
+    usersAnswers: UsersAnswersModel[];
 }

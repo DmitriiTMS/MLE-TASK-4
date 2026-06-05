@@ -8,6 +8,7 @@ import { createCorsConfig } from './config/cors.factory';
 import { swaggerConfig } from './config/swagger.config';
 import { createValidationConfig } from './config/validation.factory';
 import { AppModule } from './modules/app.module';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);

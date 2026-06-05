@@ -537,8 +537,6 @@ describe('AuthController (e2e)', () => {
             const response = await request(httpServer)
                 .post(routeRefresh)
                 .set('Cookie', [`refreshToken=${anotherUserRefreshToken}`]);
-
-            console.log(`Cross-user refresh status: ${response.status}`);
             expect([200, 401]).toContain(response.status);
         });
     });

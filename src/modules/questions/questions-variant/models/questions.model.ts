@@ -9,6 +9,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { PollModel } from '../../../polls/models/polls.model';
+import { UsersAnswersModel } from '../../../users-answers/models/users-answers.model';
 import { QuestionOptionModel } from '../../question-options/models/question-options.model';
 
 export type QuestionType = 'single' | 'multiple';
@@ -42,4 +43,7 @@ export class QuestionModel {
 
     @OneToMany(() => QuestionOptionModel, (option) => option.question, { cascade: true })
     questionOptions: QuestionOptionModel[];
+
+    @OneToMany(() => UsersAnswersModel, (usersAnswers) => usersAnswers.question)
+    usersAnswers: UsersAnswersModel[];
 }

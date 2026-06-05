@@ -24,7 +24,7 @@ export class QuestionsService implements IQuestionsService {
         private readonly pollsRepository: IPollsRepository,
         @Inject(QUESTIONS_INJECTION_TOKENS.IQUESTIONS_REPOSITORY)
         private readonly questionsRepository: IQuestionsRepository,
-    ) {}
+    ) { }
 
     async createQuestionWithOptions(data: DataRequestQuestionDto): Promise<QuestionEntity> {
         const operation = 'createQuestionWithOptions';
@@ -228,4 +228,5 @@ export class QuestionsService implements IQuestionsService {
 
         await this.questionsRepository.deleteQuestionWithOptions(pollId, questionId);
     }
+
 }

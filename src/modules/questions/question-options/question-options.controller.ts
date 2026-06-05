@@ -17,11 +17,11 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/utils/jwt/jwt-auth.guard';
 import { OPTIONS_INJECTION_TOKENS } from './constants/option-injection-tokens';
 import { ICreateOptioData, CreateOptionResponseDto, IDeleteOptionData } from './constants/types';
+import { ApiCreateOptionDocumentation } from './decorators/swagger/create-question-option.decorators';
+import { ApiDeleteOptionDocumentation } from './decorators/swagger/delete-question-option.decorators';
 import { QuestionOptionEntity } from './domain/question-options.entity';
 import { CreateOptionDto } from './dto/create-question-option.dto';
 import type { IQuestionOptionsService } from './question-options.service.interface';
-import { ApiCreateOptionDocumentation } from './decorators/swagger/create-question-option.decorators';
-import { ApiDeleteOptionDocumentation } from './decorators/swagger/delete-question-option.decorators';
 
 @ApiTags('Варианты ответов')
 @Controller('question/:questionId/option')
@@ -33,7 +33,7 @@ export class QuestionOptionsController {
         private readonly logger: Logger,
         @Inject(OPTIONS_INJECTION_TOKENS.IOPTIONS_SERVICE)
         private readonly questionOptionsService: IQuestionOptionsService,
-    ) { }
+    ) {}
 
     @Post()
     @UseGuards(ThrottlerGuard)
@@ -97,7 +97,7 @@ export class QuestionOptionsController {
 
         this.logger.error(
             `[${this.context}] - Request failed - Method: ${method}, Route: ${route}, ` +
-            `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
+                `Context: ${JSON.stringify(context)}, Error: ${errorMessage}`,
         );
 
         if (errorStack && process.env.NODE_ENV !== 'production') {
