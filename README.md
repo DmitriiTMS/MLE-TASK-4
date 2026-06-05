@@ -29,4 +29,13 @@ yarn start:prod
 9. Импортировать коллекцию Postman:
 импортируйте файл MLE-TASK-4.postman_collection из корня репозитория в Postman.
 
+10. Запуск тестов: 
+docker-compose --env-file .env.test up -d
+yarn migration:run:test
+
+yarn test
+yarn test:e2e:all
+
+
+
 
