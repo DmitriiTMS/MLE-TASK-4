@@ -12,6 +12,7 @@ import { POLL_INJECTION_TOKENS } from "../polls/constants/poll-injection-tokens"
 import type { IPollsRepository } from "../polls/polls.repository.interface";
 import { OPTIONS_MESSAGE } from "../questions/question-options/constants/types-messages";
 import { USERS_ANSWERS_MESSAGE } from "./constants/types-messages";
+import { UsersAnswersGateway } from "./users-answers.gateway";
 
 @Injectable()
 export class UsersAnswersService implements IUsersAnswersService {
@@ -25,10 +26,10 @@ export class UsersAnswersService implements IUsersAnswersService {
         private readonly pollsRepository: IPollsRepository,
         @Inject(USERS_ANSWERS_INJECTION_TOKENS.IUSERS_ANSWERS_REPOSITORY)
         private readonly usersAnswersRepository: IUsersAnswersRepository,
-
+        private readonly usersAnswersGateway: UsersAnswersGateway
     ) { }
 
-    async createAnswer(data: IDataCreateAnswer) {
+    async createAnswer(data: IDataCreateAnswer): Promise<{ userAnswerSave: boolean }> {
         const { userId, pollId, questionId, questionOptionIds } = data
         const operation = 'createAnswer';
         this.logger.log(
@@ -60,7 +61,9 @@ export class UsersAnswersService implements IUsersAnswersService {
         );
 
         try {
-            await this.usersAnswersRepository.createMultipleAnswers(answerEntities);
+            const result = await this.usersAnswersRepository.createMultipleAnswers(answerEntities);
+            await this.usersAnswersGateway.getQuantityAnswers(pollId);
+            return { userAnswerSave: result.userAnswerSave }
         } catch (error) {
             this.logger.error(
                 `[${this.context}] - ${operation} operation failed - User ID: ${userId}`,

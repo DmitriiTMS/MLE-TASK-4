@@ -2,6 +2,7 @@ import { PollEntity } from "../../polls/domain/polls.entity";
 import { QuestionOptionEntity } from "../../questions/question-options/domain/question-options.entity";
 import { QuestionEntity } from "../../questions/questions-variant/domain/questions.entity";
 import { UserEntity } from "../../users/domain/user.entity";
+import { ResultsWithNamesRaw, ResultsWithNamesRawResponse } from "../constants/types";
 import { UsersAnswersModel } from "../models/users-answers.model";
 
 
@@ -74,5 +75,22 @@ export class UsersAnswersEntity {
         return data.map(item => this.toEntity(item));
     }
 
-    
+    static toResponseGetQuantity(data: ResultsWithNamesRaw[]): ResultsWithNamesRawResponse[] {
+        if (!data || data.length === 0) {
+            return [];
+        }
+        return data.map((item) => {
+            return {
+                pollId: item.pollId,
+                questionId: item.questionId,
+                questionOptionId: item.questionOptionId,
+                pollTitle: item.pollTitle,
+                questionText: item.questionText,
+                optionText: item.optionText,
+                count: parseInt(item.count)
+            }
+        })
+
+    }
+
 }

@@ -1,5 +1,5 @@
 import { IDataCreateAnswer } from "./constants/types";
 
 export interface IUsersAnswersService {
-  createAnswer(data: IDataCreateAnswer): Promise<any>
+  createAnswer(data: IDataCreateAnswer): Promise<{ userAnswerSave: boolean}>
 }

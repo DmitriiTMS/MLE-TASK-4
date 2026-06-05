@@ -1,10 +1,13 @@
 import { Injectable, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
+
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-    constructor(private readonly logger: Logger) {
+    constructor(
+        private readonly logger: Logger
+    ) {
         super();
     }
 
