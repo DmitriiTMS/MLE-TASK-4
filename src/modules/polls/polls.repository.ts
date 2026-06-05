@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PollEntity } from './domain/polls.entity';
@@ -128,13 +128,66 @@ export class PollsRepository implements IPollsRepository {
         await this.pollRepository.delete({ id });
     }
 
-    async updateIsActive(poll: PollEntity): Promise<boolean> {
-        const savedPoll = await this.pollRepository.save(poll);
-        return savedPoll.isActive;
+
+    async updateIsActive(poll: PollEntity): Promise<boolean | null> {
+        await this.pollRepository.update({ id: poll.id }, { isActive: poll.isActive });
+
+        const updatedPoll = await this.pollRepository.findOne({
+            where: { id: poll.id },
+            relations: ['createUser'],
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                isActive: true,
+                isPublic: true,
+                createdAt: true,
+                updatedAt: true,
+                createUser: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            },
+        });
+
+        if (!updatedPoll) {
+            return null;
+        }
+
+        return PollEntity.toEntity(updatedPoll).isActive;
     }
 
-    async updateIsPublic(poll: PollEntity): Promise<boolean> {
-        const savedPoll = await this.pollRepository.save(poll);
-        return savedPoll.isPublic;
+    async updateIsPublic(poll: PollEntity): Promise<boolean | null> {
+        await this.pollRepository.update({ id: poll.id }, { isPublic: poll.isPublic });
+
+        const updatedPoll = await this.pollRepository.findOne({
+            where: { id: poll.id },
+            relations: ['createUser'],
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                isActive: true,
+                isPublic: true,
+                createdAt: true,
+                updatedAt: true,
+                createUser: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            },
+        });
+
+        if (!updatedPoll) {
+            return null;
+        }
+
+        return PollEntity.toEntity(updatedPoll).isPublic;
     }
 }

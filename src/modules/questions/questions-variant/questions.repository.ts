@@ -20,7 +20,7 @@ export class QuestionsRepository implements IQuestionsRepository {
         @InjectRepository(PollModel)
         private readonly pollRepository: Repository<PollModel>,
         private readonly dataSource: DataSource,
-    ) {}
+    ) { }
 
     async createQuestion(
         question: QuestionEntity,
@@ -96,6 +96,7 @@ export class QuestionsRepository implements IQuestionsRepository {
                 },
             },
         });
+
         return question ? QuestionEntity.toEntity(question) : null;
     }
 
@@ -149,7 +150,7 @@ export class QuestionsRepository implements IQuestionsRepository {
                 `${this.context} - Question with options saved successfully: ${question.id}`,
             );
 
-            return QuestionEntity.toEntity(updatedQuestion);
+            return updatedQuestion;
         } catch (error: unknown) {
             this.logger.error(`${this.context} - transaction failed: ${error}`);
             throw error;
@@ -166,6 +167,15 @@ export class QuestionsRepository implements IQuestionsRepository {
     async findOneQuestion(questionId: number): Promise<QuestionEntity | null> {
         const question = await this.questionRepository.findOne({
             where: { id: questionId },
+            relations: {
+                poll: true,
+                questionOptions: true,
+            },
+            order: {
+                questionOptions: {
+                    orderNum: 'ASC',
+                },
+            },
         });
 
         return question ? QuestionEntity.toEntity(question) : null;

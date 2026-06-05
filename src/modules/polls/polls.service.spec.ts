@@ -443,6 +443,7 @@ describe('PollsService', () => {
             expect(logger.error).toHaveBeenCalled();
         });
     });
+    
     describe('toggleActive', () => {
         const userId = 1;
         const pollId = 1;

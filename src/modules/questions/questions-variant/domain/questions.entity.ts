@@ -108,4 +108,18 @@ export class QuestionEntity {
 
         return entity;
     }
+
+    belongsToPoll(pollId: number): boolean {
+        return this.pollId === pollId;
+    }
+
+    hasAllOptions(optionIds: number[]): boolean {
+
+        if (!this.questionOptions || this.questionOptions.length === 0) {
+            return false;
+        }
+
+        const questionOptionIds = new Set(this.questionOptions.map(o => o.id));
+        return optionIds.every(id => questionOptionIds.has(id));
+    }
 }
